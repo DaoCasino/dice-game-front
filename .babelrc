@@ -1,0 +1,17 @@
+{
+  "presets": [
+    [
+      "env",
+      {
+        "targets": {
+          "browsers": [
+            "Chrome >= 55"
+          ]
+        }
+      }
+    ]
+  ],
+  "plugins": [
+    "transform-class-properties"
+  ]
+}
