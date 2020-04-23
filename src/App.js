@@ -1,9 +1,8 @@
 import * as PIXI from 'pixi.js'
 import WebFont from 'webfontloader'
 
-import DCWebApi from '@daocasino/dc-webapi'
-import { Dice } from '@daocasino/dc-dapp-logic'
-import { AdapterMock } from '@daocasino/dc-core'
+import { Dice } from './Dice'
+import { DiceMock } from './DiceMock'
 
 import MainScreen from './screens/MainScreen'
 import DeepModel from './utils/DeepModel'
@@ -55,12 +54,11 @@ class App {
 
   async init(config) {
     this.config = config
-    this.dcconfig = this.config.dcconfig
     this.resources = this.config.resources
     console.log(process.env)
     console.log('%c init started', 'padding: 7px; background: #005918; color: #ffffff; font: 1.3rem/1 Arial;')
 
-    this.isMock = process.env.GAME_IS_MOCK === 'true'
+    this.isMock = 'GAME_IS_MOCK' in process.env ? process.env.GAME_IS_MOCK === 'true' : false
 
     this.eventBus = window.eventBus
     this.eventBus.emit(AppEvent.Initialize)
@@ -74,13 +72,11 @@ class App {
         ],
     )
 
-    this.API = new DCWebApi(this.dcconfig.dcapi)
     await this.loadFont()
     await this.loadResources()
     this.setDefaultValues()
     this.initInterface()
-    await this.initAPI(this.config)
-    await this.connect(this.gameModel.get('deposit'))
+    await this.connect(this.gameModel.get('deposit')) // TODO: зачем тут параметр? потому что депозит ставился при открытии канала
     this.onGameReady()
   }
 
@@ -230,11 +226,11 @@ class App {
     })
   }
 
-  async onAccountUpdate() {
+  async onAccountUpdate() { // TODO: переделать
     const address = await this.account.getAddress()
     const accountId = await this.account.getAccountId()
     const balances = await this.account.getBalances()
-    
+
     console.log('address', address)
     console.log('id', accountId)
     console.log('balances', balances)
@@ -243,7 +239,7 @@ class App {
     this.gameModel.set('deposit', Math.min(this.config.deposit, balances.total))
   }
 
-  withdraw() {
+  withdraw() { // TODO: где? вызывается?
     this.gameModel.set('connected', false)
 
     this.disconnect().then(result => {
@@ -252,29 +248,13 @@ class App {
   }
 
   async connect(deposit) {
-    return new Promise(async resolve => {
-      deposit = Number(deposit)
-
-      if (this.isMock) {
-        this.gameAPI = new Dice(new AdapterMock('42', [0, 1000]))
-        resolve()
-      } else {
-        try {
-          console.log('%c connecting to bankroller', 'padding: 7px; background: #ab5e00; color: #ffffff; font: 1.3rem/1 Arial;')
-          const conRes = await this.game.connect({
-            deposit,
-          })
-          console.log('connect', conRes)
-          this.gameAPI = await this.game.startGameService({})
-          console.log(this.gameAPI)
-          console.log('%c bankroller connected', 'padding: 7px; background: #005918; color: #ffffff; font: 1.3rem/1 Arial;')
-          resolve()
-        } catch (err) {
-          alert('Open channel error...')
-          return null
-        }
-      }
-    })
+    if (this.isMock) {
+      this.gameAPI = new DiceMock()
+      return Promise.resolve()
+    } else {
+      this.gameAPI = new Dice()
+      return Promise.resolve()
+    }
   }
 
   play() {
@@ -286,13 +266,13 @@ class App {
     })
   }
 
-  disconnect() {
+  disconnect() { // TODO: когда она вызывается? при beforeunload и в withdraw
     try {
       return new Promise(resolve => {
         this.game.disconnect().then(result => {
           console.log('Disconnect res', result)
 
-          this.onAccountUpdate()
+          this.onAccountUpdate() // TODO: !
 
           resolve(result)
         })

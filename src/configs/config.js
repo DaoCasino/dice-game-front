@@ -1,8 +1,6 @@
-import dcconfig from './dcconfig'
 import resources from './resources'
 
 export default {
-  dcconfig: dcconfig,
   resources: resources,
 
   connected: false,

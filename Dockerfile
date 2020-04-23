@@ -1,13 +1,16 @@
-# TODO: need change
-FROM sham1316/jenkins-jnlp-slave:3 as builder
+FROM node:alpine as builder
+
+ARG mock
 
 WORKDIR /sources
 COPY package.json ./
 RUN yarn install
 
 COPY ./ ./
+ENV GAME_IS_MOCK=$mock
 ENV NODE_OPTIONS="--max-old-space-size=2048"
-RUN yarn build
+
+RUN echo "=> build mock: ${mock}" && yarn build
 
 FROM nginx:1.15.8-alpine
 WORKDIR /usr/share/nginx/html

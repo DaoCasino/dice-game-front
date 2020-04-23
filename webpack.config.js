@@ -11,10 +11,9 @@ const CleanWebpackPlugin = require('clean-webpack-plugin')
 const ScriptExtHtmlWebpackPlugin = require('script-ext-html-webpack-plugin')
 
 const env = { stringified: {}, raw: {} }
-const raw = require('dotenv').parse(fs.readFileSync('.env'))
-
+// const raw = require('dotenv').parse(fs.readFileSync('.env'))
+const raw = {}
 raw.NODE_ENV = process.env.NODE_ENV || 'development'
-raw.DC_PLATFORM_ID = process.env.DC_PLATFORM_ID || os.hostname()
 raw.VERSION = new Date().toISOString()
 raw.BUILD_MODE = process.env.BUILD_MODE || 'development'
 raw.GAME_IS_MOCK = process.env.GAME_IS_MOCK
