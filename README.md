@@ -1,6 +1,6 @@
 # Dice
 
-"Кубики" [Описание концепции](https://daocasino.atlassian.net/wiki/spaces/PD/pages/26640385/Concept+Dice)
+"Кубики"
 
 ## Оглавление
 
@@ -18,26 +18,12 @@
 
 ## Установка
 
-Склонировать репозиторий [dc-game-dice](https://github.com/DaoCasino/dc-game-dice)
-
-```bash
-  git clone https://github.com/DaoCasino/dc-game-dice.git
-```
-
-Зарегистрировать приватный npm-регистр по инструкции: [https://daocasino.atlassian.net/wiki/spaces/DAO/pages/27557889/Verdaccio](https://daocasino.atlassian.net/wiki/spaces/DAO/pages/27557889/Verdaccio)
-
-Выполнить установку зависимостей с помощью yarn
-
-```bash
-cd dc-game-dice
-yarn
-```
+`yarn`
 
 ## CLI
 
-- `yarn start` - запуск версии игры с банкроллером
-- `yarn start:mock` - запуск mock-версии игры (с "заглушкой" банкроллера и бэкенда)
-
+- `yarn start` - запуск игры
+- `yarn start:mock` - запуск mock-версии игры (с "заглушкой")
 - `yarn build` - cборка проекта
 
 ## Оформление кода
