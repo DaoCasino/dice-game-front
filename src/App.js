@@ -4,6 +4,8 @@ import WebFont from 'webfontloader'
 import { Dice } from './Dice'
 import { DiceMock } from './DiceMock'
 
+import { connect } from '@daocasino/platform-back-js-lib'
+
 import MainScreen from './screens/MainScreen'
 import DeepModel from './utils/DeepModel'
 import Resources from './utils/Resources'
@@ -56,9 +58,15 @@ class App {
     this.config = config
     this.resources = this.config.resources
     console.log(process.env)
-    console.log('%c init started', 'padding: 7px; background: #005918; color: #ffffff; font: 1.3rem/1 Arial;')
+    console.log(
+      '%c init started',
+      'padding: 7px; background: #005918; color: #ffffff; font: 1.3rem/1 Arial;'
+    )
 
-    this.isMock = 'GAME_IS_MOCK' in process.env ? process.env.GAME_IS_MOCK === 'true' : false
+    this.isMock =
+      'GAME_IS_MOCK' in process.env
+        ? process.env.GAME_IS_MOCK === 'true'
+        : false
 
     this.eventBus = window.eventBus
     this.eventBus.emit(AppEvent.Initialize)
@@ -69,7 +77,7 @@ class App {
       'autospin',
       this.gameModel.get('autospinVariations')[
         this.gameModel.get('autospinVariationIndex')
-        ],
+      ]
     )
 
     await this.loadFont()
@@ -81,44 +89,65 @@ class App {
   }
 
   loadResources() {
-    return new Promise((resolve) => {
-      console.log('%c loading resources', 'padding: 7px; background: #ab5e00; color: #ffffff; font: 1.3rem/1 Arial;')
+    return new Promise(resolve => {
+      console.log(
+        '%c loading resources',
+        'padding: 7px; background: #ab5e00; color: #ffffff; font: 1.3rem/1 Arial;'
+      )
       Resources.urlMap = this.config.resources.images
       Resources.loadAll().then(() => {
-        console.log('%c resources loaded', 'padding: 7px; background: #005918; color: #ffffff; font: 1.3rem/1 Arial;')
+        console.log(
+          '%c resources loaded',
+          'padding: 7px; background: #005918; color: #ffffff; font: 1.3rem/1 Arial;'
+        )
         resolve()
       })
     })
   }
 
   loadFont() {
-    return new Promise((resolve) => {
-      console.log('%c loading fonts', 'padding: 7px; background: #ab5e00; color: #ffffff; font: 1.3rem/1 Arial;')
+    return new Promise(resolve => {
+      console.log(
+        '%c loading fonts',
+        'padding: 7px; background: #ab5e00; color: #ffffff; font: 1.3rem/1 Arial;'
+      )
       WebFont.load({
         custom: {
           families: this.resources.fonts,
         },
         active: () => {
-          console.log('%c fonts loaded', 'padding: 7px; background: #005918; color: #ffffff; font: 1.3rem/1 Arial;')
+          console.log(
+            '%c fonts loaded',
+            'padding: 7px; background: #005918; color: #ffffff; font: 1.3rem/1 Arial;'
+          )
           resolve()
-        }
+        },
       })
     })
   }
 
   setDefaultValues() {
     this.gameModel.set('balance', this.gameModel.get('deposit'))
-    console.log('%c default values set', 'padding: 7px; background: #005918; color: #ffffff; font: 1.3rem/1 Arial;')
+    console.log(
+      '%c default values set',
+      'padding: 7px; background: #005918; color: #ffffff; font: 1.3rem/1 Arial;'
+    )
   }
 
   async initInterface() {
-    console.log('%c init interface start', 'padding: 7px; background: #ab5e00; color: #ffffff; font: 1.3rem/1 Arial;')
+    console.log(
+      '%c init interface start',
+      'padding: 7px; background: #ab5e00; color: #ffffff; font: 1.3rem/1 Arial;'
+    )
     this.initCanvas()
     this.initPIXI()
     this.initScene()
     this.initTicker()
     this.resize()
-    console.log('%c init interface finished', 'padding: 7px; background: #005918; color: #ffffff; font: 1.3rem/1 Arial;')
+    console.log(
+      '%c init interface finished',
+      'padding: 7px; background: #005918; color: #ffffff; font: 1.3rem/1 Arial;'
+    )
   }
 
   initCanvas() {
@@ -181,8 +210,8 @@ class App {
         this.gameModel.set(
           'balance',
           parseFloat(
-            (this.gameModel.get('balance') + result.profits[1]).toFixed(4),
-          ),
+            (this.gameModel.get('balance') + result.profits[1]).toFixed(4)
+          )
         )
         this.eventBus.emit(AppEvent.SpinEnd, profit, roll)
       })
@@ -195,16 +224,25 @@ class App {
   }
 
   async initAPI() {
-    console.log('%c init API start', 'padding: 7px; background: #ab5e00; color: #ffffff; font: 1.3rem/1 Arial;')
+    console.log(
+      '%c init API start',
+      'padding: 7px; background: #ab5e00; color: #ffffff; font: 1.3rem/1 Arial;'
+    )
     console.groupCollapsed('Init DC Web Api')
     console.table(this.dcconfig.dcapi)
     console.table(this.dcconfig.game)
     console.groupEnd()
 
     if (this.isMock) {
-      console.log('%c init Mock API finished', 'padding: 7px; background: #005918; color: #ffffff; font: 1.3rem/1 Arial;')
+      console.log(
+        '%c init Mock API finished',
+        'padding: 7px; background: #005918; color: #ffffff; font: 1.3rem/1 Arial;'
+      )
     } else {
-      console.log('%c create game', 'padding: 7px; background: #ab5e00; color: #ffffff; font: 1.3rem/1 Arial;')
+      console.log(
+        '%c create game',
+        'padding: 7px; background: #ab5e00; color: #ffffff; font: 1.3rem/1 Arial;'
+      )
       const { game, account } = await this.API.init()
       this.game = game
       this.account = account
@@ -213,7 +251,10 @@ class App {
       this.gameModel.set('playerId', address)
       await this.game.createGame(this.dcconfig.game)
       await this.onAccountUpdate()
-      console.log('%c game successfully created', 'padding: 7px; background: #005918; color: #ffffff; font: 1.3rem/1 Arial;')
+      console.log(
+        '%c game successfully created',
+        'padding: 7px; background: #005918; color: #ffffff; font: 1.3rem/1 Arial;'
+      )
     }
 
     return Promise.resolve()
@@ -222,11 +263,12 @@ class App {
   async onGameReady() {
     this.gameModel.set({
       connected: true,
-      balance: this.gameModel.get('deposit')
+      balance: this.gameModel.get('deposit'),
     })
   }
 
-  async onAccountUpdate() { // TODO: переделать
+  async onAccountUpdate() {
+    // TODO: переделать
     const address = await this.account.getAddress()
     const accountId = await this.account.getAccountId()
     const balances = await this.account.getBalances()
@@ -239,7 +281,8 @@ class App {
     this.gameModel.set('deposit', Math.min(this.config.deposit, balances.total))
   }
 
-  withdraw() { // TODO: где? вызывается?
+  withdraw() {
+    // TODO: где? вызывается?
     this.gameModel.set('connected', false)
 
     this.disconnect().then(result => {
@@ -252,8 +295,24 @@ class App {
       this.gameAPI = new DiceMock()
       return Promise.resolve()
     } else {
-      this.gameAPI = new Dice()
-      return Promise.resolve()
+      const { backendAdrr, userName } = this.config.platform
+      try {
+        const connection = await connect(backendAdrr, userName, false)
+        const api = await connection.listen(
+          () => {
+            // This triggers when backend sends update of game session
+          },
+          () => {
+            // This triggers when the connection is closed
+          }
+        )
+        const accountInfo = await api.accountInfo()
+        this.gameAPI = new Dice(this.config, api, accountInfo)
+      } catch (err) {
+        // TODO: надо красиво обработать ошибку
+        console.error(err)
+        return Promise.reject(err)
+      }
     }
   }
 
@@ -261,12 +320,13 @@ class App {
     const userBet = this.gameModel.get('bet')
     const chance = this.gameModel.get('chance')
 
-    return this.gameAPI.roll(userBet, chance).catch(function(err) {
+    return this.gameAPI.roll(userBet, chance).catch(function (err) {
       console.error(err)
     })
   }
 
-  disconnect() { // TODO: когда она вызывается? при beforeunload и в withdraw
+  disconnect() {
+    // TODO: когда она вызывается? при beforeunload и в withdraw
     try {
       return new Promise(resolve => {
         this.game.disconnect().then(result => {

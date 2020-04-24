@@ -46,10 +46,6 @@ function getPlugins() {
       from: './static/images',
       to: './',
     }]),
-    new CopyWebpackPlugin([{
-      from: './src/configs/dapp.manifest.js',
-      to: './',
-    }]),
   ]
 
   return plugins
