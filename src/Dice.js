@@ -1,7 +1,7 @@
 import utils from './utils/Utils'
 
 const WAIT_UPDATE_TYPE = 4
-const WAIT_DURATION = 600
+const WAIT_DURATION = 100
 
 export class Dice {
   constructor(config, api) {
