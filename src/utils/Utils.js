@@ -20,9 +20,13 @@ export default class Utils {
   static rectContainsPoint(rect, point) {
     return rect.x <= point.x && point.x <= rect.x + rect.width && rect.y <= point.y && point.y <= rect.y + rect.height
   }
-  
+
   static betToFloat(bet) {
     return parseFloat(bet.replace(/\s+BET$/,''))
+  }
+
+  static toBET(bet) {
+    return bet.toFixed(4) + ' BET'
   }
 }
 

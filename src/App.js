@@ -191,19 +191,17 @@ class App {
       this.play().then(result => {
         console.log('play result', result)
 
-        if (!result || (result && !result.profits)) {
+        if (!result || (result && !result.profit)) {
           alert('Play error...')
         }
 
-        const profit = result.profits[1]
-        const roll = parseFloat((100 - result.RandomNumber / 100).toFixed(2))
-
+        const { profit, randomNumber } = result
         const spinLog = this.gameModel.get('spinLog')
 
         spinLog.push({
           prediction: 100 - this.gameModel.get('chance'),
           amount: this.gameModel.get('bet'),
-          result: roll,
+          result: randomNumber,
           payout: profit,
         })
 
@@ -212,10 +210,10 @@ class App {
         this.gameModel.set(
           'balance',
           parseFloat(
-            (this.gameModel.get('balance') + result.profits[1]).toFixed(4)
+            (this.gameModel.get('balance') + profit).toFixed(4)
           )
         )
-        this.eventBus.emit(AppEvent.SpinEnd, profit, roll)
+        this.eventBus.emit(AppEvent.SpinEnd, profit, randomNumber)
       })
     })
   }
@@ -314,8 +312,14 @@ class App {
         // Init Default values
         const getBalance = async () => {
           const { balance } = accountInfo
+          if (!balance) {
+            throw new Error('No field balance in accountInfo')
+          }
           return utils.betToFloat(balance)
         }
+
+        this.config.balance = await getBalance(accountInfo)
+        this.gameModel.set('balance', this.config.balance)
 
         const setMinMaxBets = async () => {
           // TODO: не очень красиво и правильно
@@ -325,24 +329,23 @@ class App {
               case GameParamsType.minBet:
                 this.config.betMin = value / 10000
                 this.gameModel.set('betMin', this.config.betMin)
-                // console.log({ betMin: this.config.betMin })
+                console.log({ betMin: this.config.betMin })
                 break
               case GameParamsType.maxBet:
                 this.config.betMax = value / 10000
                 this.gameModel.set('betMax', this.config.betMax)
-                // console.log({ betMax: this.config.betMax })
+                console.log({ betMax: this.config.betMax })
                 break
             }
           })
         }
 
         await setMinMaxBets()
-        this.config.balance = await getBalance(accountInfo)
-        this.gameModel.set('balance', this.config.balance)
         this.setDefaultValues()
 
-        this.gameAPI = new Dice(this.config, api, accountInfo)
+        this.gameAPI = new Dice(this.config, api)
       } catch (err) {
+        console.log('sdfsdfdf')
         // TODO: надо красиво обработать ошибку
         console.error(err)
         return Promise.reject(err)
