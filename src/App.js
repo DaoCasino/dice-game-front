@@ -129,7 +129,7 @@ class App {
   }
 
   setDefaultValues() {
-    this.gameModel.set('balance', this.gameModel.get('deposit'))
+    // this.gameModel.set('balance', this.gameModel.get('deposit'))
     console.log(
       '%c default values set',
       'padding: 7px; background: #005918; color: #ffffff; font: 1.3rem/1 Arial;'
