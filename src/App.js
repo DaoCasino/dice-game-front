@@ -320,7 +320,6 @@ class App {
         const setMinMaxBets = async () => {
           // TODO: не очень красиво и правильно
           const { params } = (await api.fetchGamesInCasino(casinoId)).filter(game => game.gameId === gameId)[0]
-          if (!params || !Array.IsArray(params)) { return }
           params.forEach(({ type, value }) => {
             switch (type) {
               case GameParamsType.minBet:
