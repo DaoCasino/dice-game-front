@@ -4,6 +4,8 @@ import WebFont from 'webfontloader'
 import { Dice } from './Dice'
 import { DiceMock } from './DiceMock'
 
+import utils from './utils/Utils'
+
 import { connect } from '@daocasino/platform-back-js-lib'
 
 import MainScreen from './screens/MainScreen'
@@ -84,7 +86,7 @@ class App {
     await this.loadResources()
     this.setDefaultValues()
     this.initInterface()
-    await this.connect(this.gameModel.get('deposit')) // TODO: зачем тут параметр? потому что депозит ставился при открытии канала
+    await this.connect()
     this.onGameReady()
   }
 
@@ -306,7 +308,19 @@ class App {
             // This triggers when the connection is closed
           }
         )
+
         const accountInfo = await api.accountInfo()
+
+        // Init Default values
+        const getBalance = async () => {
+          const { balance } = accountInfo
+          return utils.betToFloat(balance)
+        }
+
+        this.config.balance = await getBalance(accountInfo)
+        this.gameModel.set('balance', this.config.balance)
+        this.setDefaultValues()
+
         this.gameAPI = new Dice(this.config, api, accountInfo)
       } catch (err) {
         // TODO: надо красиво обработать ошибку
