@@ -6,7 +6,7 @@ import { DiceMock } from './DiceMock'
 
 import utils from './utils/Utils'
 
-import { connect } from '@daocasino/platform-back-js-lib'
+import { connect, GameParamsType } from '@daocasino/platform-back-js-lib'
 
 import MainScreen from './screens/MainScreen'
 import DeepModel from './utils/DeepModel'
@@ -297,7 +297,7 @@ class App {
       this.gameAPI = new DiceMock()
       return Promise.resolve()
     } else {
-      const { backendAdrr, userName } = this.config.platform
+      const { backendAdrr, userName, casinoId, gameId } = this.config.platform
       try {
         const connection = await connect(backendAdrr, userName, false)
         const api = await connection.listen(
@@ -317,6 +317,27 @@ class App {
           return utils.betToFloat(balance)
         }
 
+        const setMinMaxBets = async () => {
+          // TODO: не очень красиво и правильно
+          const { params } = (await api.fetchGamesInCasino(casinoId)).filter(game => game.gameId === gameId)[0]
+          if (!params || !Array.IsArray(params)) { return }
+          params.forEach(({ type, value }) => {
+            switch (type) {
+              case GameParamsType.minBet:
+                this.config.betMin = value / 10000
+                this.gameModel.set('betMin', this.config.betMin)
+                // console.log({ betMin: this.config.betMin })
+                break
+              case GameParamsType.maxBet:
+                this.config.betMax = value / 10000
+                this.gameModel.set('betMax', this.config.betMax)
+                // console.log({ betMax: this.config.betMax })
+                break
+            }
+          })
+        }
+
+        await setMinMaxBets()
         this.config.balance = await getBalance(accountInfo)
         this.gameModel.set('balance', this.config.balance)
         this.setDefaultValues()
