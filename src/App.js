@@ -320,6 +320,7 @@ class App {
 
         this.config.balance = await getBalance(accountInfo)
         this.gameModel.set('balance', this.config.balance)
+        this.gameModel.set('deposit', this.config.balance)
 
         const setMinMaxBets = async () => {
           // TODO: не очень красиво и правильно
