@@ -357,7 +357,7 @@ class App {
     const userBet = this.gameModel.get('bet')
     const chance = this.gameModel.get('chance')
 
-    return this.gameAPI.roll(userBet, chance).catch(function (err) {
+    return this.gameAPI.roll(userBet, 100 - chance).catch(function (err) {
       console.error(err)
     })
   }
