@@ -4,7 +4,9 @@ import WebFont from 'webfontloader'
 import { Dice } from './Dice'
 import { DiceMock } from './DiceMock'
 
-import { connect } from '@daocasino/platform-back-js-lib'
+import utils from './utils/Utils'
+
+import { connect, GameParamsType } from '@daocasino/platform-back-js-lib'
 
 import MainScreen from './screens/MainScreen'
 import DeepModel from './utils/DeepModel'
@@ -84,7 +86,7 @@ class App {
     await this.loadResources()
     this.setDefaultValues()
     this.initInterface()
-    await this.connect(this.gameModel.get('deposit')) // TODO: зачем тут параметр? потому что депозит ставился при открытии канала
+    await this.connect()
     this.onGameReady()
   }
 
@@ -127,7 +129,7 @@ class App {
   }
 
   setDefaultValues() {
-    this.gameModel.set('balance', this.gameModel.get('deposit'))
+    // this.gameModel.set('balance', this.gameModel.get('deposit'))
     console.log(
       '%c default values set',
       'padding: 7px; background: #005918; color: #ffffff; font: 1.3rem/1 Arial;'
@@ -189,19 +191,17 @@ class App {
       this.play().then(result => {
         console.log('play result', result)
 
-        if (!result || (result && !result.profits)) {
+        if (!result || (result && !result.profit)) {
           alert('Play error...')
         }
 
-        const profit = result.profits[1]
-        const roll = parseFloat((100 - result.RandomNumber / 100).toFixed(2))
-
+        const { profit, randomNumber } = result
         const spinLog = this.gameModel.get('spinLog')
 
         spinLog.push({
           prediction: 100 - this.gameModel.get('chance'),
           amount: this.gameModel.get('bet'),
-          result: roll,
+          result: randomNumber,
           payout: profit,
         })
 
@@ -210,10 +210,10 @@ class App {
         this.gameModel.set(
           'balance',
           parseFloat(
-            (this.gameModel.get('balance') + result.profits[1]).toFixed(4)
+            (this.gameModel.get('balance') + profit).toFixed(4)
           )
         )
-        this.eventBus.emit(AppEvent.SpinEnd, profit, roll)
+        this.eventBus.emit(AppEvent.SpinEnd, profit, randomNumber)
       })
     })
   }
@@ -295,7 +295,7 @@ class App {
       this.gameAPI = new DiceMock()
       return Promise.resolve()
     } else {
-      const { backendAdrr, userName } = this.config.platform
+      const { backendAdrr, userName, casinoId, gameId } = this.config.platform
       try {
         const connection = await connect(backendAdrr, userName, false)
         const api = await connection.listen(
@@ -306,9 +306,47 @@ class App {
             // This triggers when the connection is closed
           }
         )
+
         const accountInfo = await api.accountInfo()
-        this.gameAPI = new Dice(this.config, api, accountInfo)
+
+        // Init Default values
+        const getBalance = async () => {
+          const { balance } = accountInfo
+          if (!balance) {
+            throw new Error('No field balance in accountInfo')
+          }
+          return utils.betToFloat(balance)
+        }
+
+        this.config.balance = await getBalance(accountInfo)
+        this.gameModel.set('balance', this.config.balance)
+        this.gameModel.set('deposit', this.config.balance)
+
+        const setMinMaxBets = async () => {
+          // TODO: не очень красиво и правильно
+          const { params } = (await api.fetchGamesInCasino(casinoId)).filter(game => game.gameId === gameId)[0]
+          params.forEach(({ type, value }) => {
+            switch (type) {
+              case GameParamsType.minBet:
+                this.config.betMin = value / 10000
+                this.gameModel.set('betMin', this.config.betMin)
+                console.log({ betMin: this.config.betMin })
+                break
+              case GameParamsType.maxBet:
+                this.config.betMax = value / 10000
+                this.gameModel.set('betMax', this.config.betMax)
+                console.log({ betMax: this.config.betMax })
+                break
+            }
+          })
+        }
+
+        await setMinMaxBets()
+        this.setDefaultValues()
+
+        this.gameAPI = new Dice(this.config, api)
       } catch (err) {
+        console.log('sdfsdfdf')
         // TODO: надо красиво обработать ошибку
         console.error(err)
         return Promise.reject(err)
@@ -320,7 +358,7 @@ class App {
     const userBet = this.gameModel.get('bet')
     const chance = this.gameModel.get('chance')
 
-    return this.gameAPI.roll(userBet, chance).catch(function (err) {
+    return this.gameAPI.roll(userBet, 100 - chance).catch(function (err) {
       console.error(err)
     })
   }

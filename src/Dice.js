@@ -1,16 +1,16 @@
-const toBET = bet => bet.toFixed(4) + ' BET'
-const betToFloat = bet => parseFloat(bet.replace(' BET', ''))
+import utils from './utils/Utils'
+
+const WAIT_UPDATE_TYPE = 4
+const WAIT_DURATION = 100
 
 export class Dice {
-  constructor(config, api, accountInfo) {
+  constructor(config, api) {
     this.config = config
     this.api = api
-    this.accountInfo = accountInfo
-
   }
 
 
-  waitForActionComplete (sessionId, updateType = 4, duration = 1000) { //  TODO: магия нужны константы
+  waitForActionComplete (sessionId, updateType = WAIT_UPDATE_TYPE, duration = WAIT_DURATION) {
     const fetchUpdates = () => this.api.fetchSessionUpdates(sessionId)
     return new Promise((resolve, reject) => {
       const waitForActionComplete = () => {
@@ -20,7 +20,7 @@ export class Dice {
                 setTimeout(waitForActionComplete, duration)
                 return
             }
-            resolve(update.data.player_win_amount)
+            resolve(update.data)
         }).catch(err => reject(err))
       }
       waitForActionComplete()
@@ -34,10 +34,9 @@ export class Dice {
     this.checkChance(number)
 
     const { casinoId, gameId, actionType } = this.config.platform
-    const deposit = toBET(bet)
+    const deposit = utils.toBET(bet)
 
-    // RandomNumber - почему-то массив от 1 до 10000
-    let result = { RandomNumber: 0, profits: [0, 0] }
+    let result = { randomNumber: undefined, profit: undefined }
 
     // если profit > 0 -> выиграл игрок
     // profit < 0 - выиграл банкроллер
@@ -46,9 +45,10 @@ export class Dice {
     try {
       const session = await this.api.newGame(casinoId, gameId, deposit, actionType, [Number(number)])
       console.log(session)
-      const playerWinAmount = await this.waitForActionComplete(session.id)
-      console.log({ playerWinAmount })
-      result.profits[1] = betToFloat(playerWinAmount)
+      const data = await this.waitForActionComplete(session.id)
+
+      result.randomNumber = data.msg[0]
+      result.profit = utils.betToFloat(data.player_win_amount)
     } catch (err) {
       console.error(err)
     }
