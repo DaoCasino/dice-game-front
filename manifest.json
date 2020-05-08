@@ -1,0 +1,11 @@
+{
+    "name": "Dice",
+    "icons": {
+        "small": "/poster.png",
+        "big": "/bg.png"
+    },
+    "url": "http://",
+    "description": "lorem ipsum",
+    "text": "lorem ipsum",
+    "gameSpecURL": "http://"
+}
