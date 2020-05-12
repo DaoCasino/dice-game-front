@@ -16,7 +16,8 @@ const raw = {}
 raw.NODE_ENV = process.env.NODE_ENV || 'development'
 raw.VERSION = new Date().toISOString()
 raw.BUILD_MODE = process.env.BUILD_MODE || 'development'
-raw.GAME_IS_MOCK = process.env.GAME_IS_MOCK
+raw.GAME_IS_MOCK = process.env.GAME_IS_MOCK || false
+raw.BACKEND_ADDR = process.env.BACKEND_ADDR || 'localhost:8080'
 
 const stringified = {
   'process.env': Object.keys(raw).reduce((e, key) => {
