@@ -297,15 +297,9 @@ class App {
     } else {
       const { backendAdrr, userName, casinoId, gameId } = this.config.platform
       try {
-        const connection = await connect(backendAdrr, userName, false)
-        const api = await connection.listen(
-          () => {
-            // This triggers when backend sends update of game session
-          },
-          () => {
-            // This triggers when the connection is closed
-          }
-        )
+        const api = await connect(backendAdrr, { secure: false })
+        const creds = await api.getToken(userName)
+        await api.auth(creds)
 
         const accountInfo = await api.accountInfo()
 
