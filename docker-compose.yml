@@ -1,0 +1,28 @@
+version: '3'
+services:
+    dice-game:
+        container_name: dice-game
+        build:
+            context: .
+            args:
+                mock: "false"
+                backendAddr: "localhost:8080"
+            dockerfile: ./Dockerfile
+        ports:
+            - 8081:80
+        networks:
+            - dice-game-network
+    dice-game-mock:
+        container_name: dice-game-mock
+        build:
+            context: .
+            args:
+                mock: "true"
+                backendAddr: "localhost:8080"
+            dockerfile: ./Dockerfile
+        ports:
+            - 8082:80
+        networks:
+            - dice-game-network
+networks:
+    dice-game-network:
