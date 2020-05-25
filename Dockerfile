@@ -19,6 +19,7 @@ WORKDIR /usr/share/nginx/html
 RUN rm -rf *
 COPY --from=builder /sources/dist .
 COPY --from=builder /sources/manifest.json .
+COPY --from=builder /sources/nginx.conf /etc/nginx/conf.d/default.conf
 
 EXPOSE 80
 STOPSIGNAL SIGTERM
