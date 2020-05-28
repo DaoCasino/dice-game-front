@@ -1,8 +1,7 @@
 import resources from './resources'
-import platform from './platform.config.js'
 
 export default {
-  platform,
+
   resources: resources,
   connected: false,
 
