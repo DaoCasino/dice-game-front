@@ -80,10 +80,9 @@ class App {
 
     await this.loadFont()
     await this.loadResources()
-    this.setDefaultValues()
+    // this.setDefaultValues()
 
     await this.connect()
-
     this.initInterface()
     
     this.onGameReady()
@@ -336,8 +335,10 @@ class App {
         // await setMinMaxBets()
         // this.setDefaultValues()
 
-        this.gameAPI = new Dice(this.gameModel)
-        return this.gameAPI.init()
+        this.gameAPI = new Dice()
+        const { connected, balance } = await this.gameAPI.init()
+        this.gameModel.set('connected', connected)
+        this.gameModel.set('balance', balance)
       } catch (err) {
         console.log('sdfsdfdf')
         // TODO: надо красиво обработать ошибку

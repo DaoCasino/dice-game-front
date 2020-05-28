@@ -8,22 +8,29 @@ const checkChance = chance => {
   }
 
 export class Dice {
-    constructor(gameModel) {
-        this.gameModel = gameModel
-    }
     async init() {
+        const result = {
+            connected: false,
+            balance: 0,
+        }
+
+        try {
         // 1 connect iframe
         const iframeMessagingProvider = await IframeMessagingProvider.create('child')
         this.service = iframeMessagingProvider.getRemoteService('GameService')
+
+        result.connected = true
         // 2 get user balance
-        const balance = utils.betToFloat(await this.service.getBalance())
-        this.gameModel.set('balance', balance)
-        this.gameModel.set('deposit', balance)
+        result.balance = utils.betToFloat(await this.service.getBalance())
+
 
         // TODO: need to do
         // 3 get game params min max bet
+        } catch(err) {
+            console.error(err)
+        }
 
-        this.gameModel.set('connected', true)
+        return result
     }
 
     async roll(bet, number) {
