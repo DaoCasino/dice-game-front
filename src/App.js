@@ -4,10 +4,6 @@ import WebFont from 'webfontloader'
 import { Dice } from './Dice'
 import { DiceMock } from './DiceMock'
 
-import utils from './utils/Utils'
-
-import { connect, GameParamsType } from '@daocasino/platform-back-js-lib'
-
 import MainScreen from './screens/MainScreen'
 import DeepModel from './utils/DeepModel'
 import Resources from './utils/Resources'
@@ -84,9 +80,11 @@ class App {
 
     await this.loadFont()
     await this.loadResources()
-    this.setDefaultValues()
-    this.initInterface()
+    // this.setDefaultValues()
+
     await this.connect()
+    this.initInterface()
+
     this.onGameReady()
   }
 
@@ -209,9 +207,7 @@ class App {
 
         this.gameModel.set(
           'balance',
-          parseFloat(
-            (this.gameModel.get('balance') + profit).toFixed(4)
-          )
+          parseFloat((this.gameModel.get('balance') + profit).toFixed(4))
         )
         this.eventBus.emit(AppEvent.SpinEnd, profit, randomNumber)
       })
@@ -295,50 +291,26 @@ class App {
       this.gameAPI = new DiceMock()
       return Promise.resolve()
     } else {
-      const { backendAdrr, userName, casinoId, gameId } = this.config.platform
       try {
-        const api = await connect(backendAdrr, { secure: false })
-        const creds = await api.getToken(userName)
-        await api.auth(creds)
+        this.gameAPI = new Dice()
+        const { connected, balance, params } = await this.gameAPI.init()
+        this.gameModel.set('connected', connected)
+        this.gameModel.set('balance', balance)
 
-        const accountInfo = await api.accountInfo()
-
-        // Init Default values
-        const getBalance = async () => {
-          const { balance } = accountInfo
-          if (!balance) {
-            throw new Error('No field balance in accountInfo')
+        params.forEach(({ type, value }) => {
+          switch (type) {
+            case 0:
+              this.config.betMin = value / 10000
+              this.gameModel.set('betMin', this.config.betMin)
+              console.log({ betMin: this.config.betMin })
+              break
+            case 1:
+              this.config.betMax = value / 10000
+              this.gameModel.set('betMax', this.config.betMax)
+              console.log({ betMax: this.config.betMax })
+              break
           }
-          return utils.betToFloat(balance)
-        }
-
-        this.config.balance = await getBalance(accountInfo)
-        this.gameModel.set('balance', this.config.balance)
-        this.gameModel.set('deposit', this.config.balance)
-
-        const setMinMaxBets = async () => {
-          // TODO: не очень красиво и правильно
-          const { params } = (await api.fetchGamesInCasino(casinoId)).filter(game => game.gameId === gameId)[0]
-          params.forEach(({ type, value }) => {
-            switch (type) {
-              case GameParamsType.minBet:
-                this.config.betMin = value / 10000
-                this.gameModel.set('betMin', this.config.betMin)
-                console.log({ betMin: this.config.betMin })
-                break
-              case GameParamsType.maxBet:
-                this.config.betMax = value / 10000
-                this.gameModel.set('betMax', this.config.betMax)
-                console.log({ betMax: this.config.betMax })
-                break
-            }
-          })
-        }
-
-        await setMinMaxBets()
-        this.setDefaultValues()
-
-        this.gameAPI = new Dice(this.config, api)
+        })
       } catch (err) {
         console.log('sdfsdfdf')
         // TODO: надо красиво обработать ошибку
