@@ -292,47 +292,6 @@ class App {
       return Promise.resolve()
     } else {
       try {
-        // const api = await connect(backendAdrr, { secure: false })
-        // const creds = await api.getToken(userName)
-        // await api.auth(creds)
-
-        // const accountInfo = await api.accountInfo()
-
-        // // Init Default values
-        // const getBalance = async () => {
-        //   const { balance } = accountInfo
-        //   if (!balance) {
-        //     throw new Error('No field balance in accountInfo')
-        //   }
-        //   return utils.betToFloat(balance)
-        // }
-
-        // this.config.balance = await getBalance(accountInfo)
-        // this.gameModel.set('balance', this.config.balance)
-        // this.gameModel.set('deposit', this.config.balance)
-
-        // const setMinMaxBets = async () => {
-        //   // TODO: не очень красиво и правильно
-        //   const { params } = (await api.fetchGamesInCasino(casinoId)).filter(game => game.gameId === gameId)[0]
-        //   params.forEach(({ type, value }) => {
-        //     switch (type) {
-        //       case GameParamsType.minBet:
-        //         this.config.betMin = value / 10000
-        //         this.gameModel.set('betMin', this.config.betMin)
-        //         console.log({ betMin: this.config.betMin })
-        //         break
-        //       case GameParamsType.maxBet:
-        //         this.config.betMax = value / 10000
-        //         this.gameModel.set('betMax', this.config.betMax)
-        //         console.log({ betMax: this.config.betMax })
-        //         break
-        //     }
-        //   })
-        // }
-
-        // await setMinMaxBets()
-        // this.setDefaultValues()
-
         this.gameAPI = new Dice()
         const { connected, balance, params } = await this.gameAPI.init()
         this.gameModel.set('connected', connected)
