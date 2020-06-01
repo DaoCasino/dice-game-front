@@ -1,6 +1,8 @@
 import utils from './utils/Utils'
 import { IframeMessagingProvider } from '@daocasino/platform-messaging/lib.browser/IframeMessagingProvider'
 
+const ACTION_TYPE = 0
+
 const checkChance = chance => {
     if (chance < 1 || chance > 99) {
       throw new Error('Invalid chance')
@@ -12,6 +14,7 @@ export class Dice {
         const result = {
             connected: false,
             balance: 0,
+            params: null,
         }
 
         try {
@@ -22,10 +25,8 @@ export class Dice {
         result.connected = true
         // 2 get user balance
         result.balance = utils.betToFloat(await this.service.getBalance())
-
-
-        // TODO: need to do
         // 3 get game params min max bet
+        result.params = await this.service.getGameParams()
         } catch(err) {
             console.error(err)
         }
@@ -41,7 +42,7 @@ export class Dice {
         let result = { randomNumber: undefined, profit: undefined }
 
         try {
-            const data = await this.service.newGame(deposit, [Number(number)])
+            const data = await this.service.newGame(deposit, ACTION_TYPE, [Number(number)])
             result.randomNumber = data.msg[0]
             result.profit = utils.betToFloat(data.player_win_amount)
         } catch (err) {

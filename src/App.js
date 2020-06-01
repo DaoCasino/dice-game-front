@@ -84,7 +84,7 @@ class App {
 
     await this.connect()
     this.initInterface()
-    
+
     this.onGameReady()
   }
 
@@ -207,9 +207,7 @@ class App {
 
         this.gameModel.set(
           'balance',
-          parseFloat(
-            (this.gameModel.get('balance') + profit).toFixed(4)
-          )
+          parseFloat((this.gameModel.get('balance') + profit).toFixed(4))
         )
         this.eventBus.emit(AppEvent.SpinEnd, profit, randomNumber)
       })
@@ -336,9 +334,24 @@ class App {
         // this.setDefaultValues()
 
         this.gameAPI = new Dice()
-        const { connected, balance } = await this.gameAPI.init()
+        const { connected, balance, params } = await this.gameAPI.init()
         this.gameModel.set('connected', connected)
         this.gameModel.set('balance', balance)
+
+        params.forEach(({ type, value }) => {
+          switch (type) {
+            case 0:
+              this.config.betMin = value / 10000
+              this.gameModel.set('betMin', this.config.betMin)
+              console.log({ betMin: this.config.betMin })
+              break
+            case 1:
+              this.config.betMax = value / 10000
+              this.gameModel.set('betMax', this.config.betMax)
+              console.log({ betMax: this.config.betMax })
+              break
+          }
+        })
       } catch (err) {
         console.log('sdfsdfdf')
         // TODO: надо красиво обработать ошибку
