@@ -1,7 +1,4 @@
-language: node_js
-
-node_js:
-  - 12
+language: minimal
 
 git:
   depth: false
@@ -9,6 +6,7 @@ git:
 env:
   global:
     - IMG_NAME=daocasino/dicegamefront
+    - IMG_TAG=${TRAVIS_TAG:-${TRAVIS_BRANCH}-${TRAVIS_COMMIT:0:5}}
 
 environments:
   - &DEV_ENV
@@ -26,11 +24,13 @@ jobs:
   include:
     - stage: build & push
       script:
-	- docker build . -t $IMG_NAME:${TRAVIS_COMMIT}
-	- docker push $IMG_NAME:${TRAVIS_COMMIT}
+        - docker build -t $IMG_NAME:$IMG_TAG .
+        - docker push $IMG_NAME:$IMG_TAG
     - stage: deploy
-      if: branch = develop
       env:
         - *DEV_ENV
       script:
-        - docker run -e AWS_DEFAULT_REGION -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY silintl/ecs-deploy:latest -c platform-dev -n dice-game -i $IMG_NAME:${TRAVIS_COMMIT}
+        |
+        if [[ "$TRAVIS_PULL_REQUEST" == "false" && "$TRAVIS_BRANCH" == "develop" ]]; then
+          docker run -e AWS_DEFAULT_REGION -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY silintl/ecs-deploy:latest -c platform-dev -n dice-game -i $IMG_NAME:$IMG_TAG
+        fi
