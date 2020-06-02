@@ -1,0 +1,36 @@
+language: minimal
+
+git:
+  depth: false
+
+env:
+  global:
+    - IMG_NAME=daocasino/dicegamefront
+    - IMG_TAG=${TRAVIS_TAG:-${TRAVIS_BRANCH}-${TRAVIS_COMMIT:0:5}}
+
+environments:
+  - &DEV_ENV
+    - AWS_DEFAULT_REGION=${DEV_AWS_REGION}
+    - AWS_ACCESS_KEY_ID=${DEV_AWS_ACCESS_KEY_ID}
+    - AWS_SECRET_ACCESS_KEY=${DEV_AWS_SECRET}
+
+services:
+  - docker
+
+before_script:
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+
+jobs:
+  include:
+    - stage: build & push
+      script:
+        - docker build -t $IMG_NAME:$IMG_TAG .
+        - docker push $IMG_NAME:$IMG_TAG
+    - stage: deploy
+      env:
+        - *DEV_ENV
+      script:
+        |
+        if [[ "$TRAVIS_PULL_REQUEST" == "false" && "$TRAVIS_BRANCH" == "develop" ]]; then
+          docker run -e AWS_DEFAULT_REGION -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY silintl/ecs-deploy:latest -c platform-dev -n dice-game -i $IMG_NAME:$IMG_TAG
+        fi
