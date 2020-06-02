@@ -1,0 +1,36 @@
+language: node_js
+
+node_js:
+  - 12
+
+git:
+  depth: false
+
+env:
+  global:
+    - IMG_NAME=daocasino/dicegamefront
+
+environments:
+  - &DEV_ENV
+    - AWS_DEFAULT_REGION=${DEV_AWS_REGION}
+    - AWS_ACCESS_KEY_ID=${DEV_AWS_ACCESS_KEY_ID}
+    - AWS_SECRET_ACCESS_KEY=${DEV_AWS_SECRET}
+
+services:
+  - docker
+
+before_script:
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+
+jobs:
+  include:
+    - stage: build & push
+      script:
+	- docker build . -t $IMG_NAME:${TRAVIS_COMMIT}
+	- docker push $IMG_NAME:${TRAVIS_COMMIT}
+    - stage: deploy
+      if: branch = develop
+      env:
+        - *DEV_ENV
+      script:
+        - docker run -e AWS_DEFAULT_REGION -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY silintl/ecs-deploy:latest -c platform-dev -n dice-game -i $IMG_NAME:${TRAVIS_COMMIT}
