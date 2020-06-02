@@ -32,5 +32,5 @@ jobs:
       script:
         |
         if [[ "$TRAVIS_PULL_REQUEST" == "false" && "$TRAVIS_BRANCH" == "develop" ]]; then
-          docker run -t 300 -e AWS_DEFAULT_REGION -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY silintl/ecs-deploy:latest -c platform-dev -n dice-game -i $IMG_NAME:$IMG_TAG --skip-deployments-check
+          docker run -e AWS_DEFAULT_REGION -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY silintl/ecs-deploy -t 300 -c platform-dev -n dice-game -i $IMG_NAME:$IMG_TAG --skip-deployments-check
         fi
