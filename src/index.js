@@ -15,17 +15,3 @@ window.addEventListener('beforeunload', (e) => {
     .then(e => {
     })
 }, false)
-
-window.addEventListener('message', e => {
-  if (e.data === 'close') {
-    if (window.app && window.app.gameModel.get('connected')) {
-      window.app.disconnect()
-        .then(response => {
-          e.source.postMessage('isClose', '*')
-        })
-
-    } else {
-      e.source.postMessage('isClose', '*')
-    }
-  }
-})

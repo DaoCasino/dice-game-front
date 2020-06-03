@@ -80,12 +80,9 @@ class App {
 
     await this.loadFont()
     await this.loadResources()
-    // this.setDefaultValues()
 
-    await this.connect()
     this.initInterface()
-
-    this.onGameReady()
+    await this.connect()
   }
 
   loadResources() {
@@ -124,14 +121,6 @@ class App {
         },
       })
     })
-  }
-
-  setDefaultValues() {
-    // this.gameModel.set('balance', this.gameModel.get('deposit'))
-    console.log(
-      '%c default values set',
-      'padding: 7px; background: #005918; color: #ffffff; font: 1.3rem/1 Arial;'
-    )
   }
 
   async initInterface() {
@@ -219,74 +208,7 @@ class App {
     this.app.ticker.add(this.update, this)
   }
 
-  async initAPI() {
-    console.log(
-      '%c init API start',
-      'padding: 7px; background: #ab5e00; color: #ffffff; font: 1.3rem/1 Arial;'
-    )
-    console.groupCollapsed('Init DC Web Api')
-    console.table(this.dcconfig.dcapi)
-    console.table(this.dcconfig.game)
-    console.groupEnd()
-
-    if (this.isMock) {
-      console.log(
-        '%c init Mock API finished',
-        'padding: 7px; background: #005918; color: #ffffff; font: 1.3rem/1 Arial;'
-      )
-    } else {
-      console.log(
-        '%c create game',
-        'padding: 7px; background: #ab5e00; color: #ffffff; font: 1.3rem/1 Arial;'
-      )
-      const { game, account } = await this.API.init()
-      this.game = game
-      this.account = account
-
-      const address = await this.account.getAddress()
-      this.gameModel.set('playerId', address)
-      await this.game.createGame(this.dcconfig.game)
-      await this.onAccountUpdate()
-      console.log(
-        '%c game successfully created',
-        'padding: 7px; background: #005918; color: #ffffff; font: 1.3rem/1 Arial;'
-      )
-    }
-
-    return Promise.resolve()
-  }
-
-  async onGameReady() {
-    this.gameModel.set({
-      connected: true,
-      balance: this.gameModel.get('deposit'),
-    })
-  }
-
-  async onAccountUpdate() {
-    // TODO: переделать
-    const address = await this.account.getAddress()
-    const accountId = await this.account.getAccountId()
-    const balances = await this.account.getBalances()
-
-    console.log('address', address)
-    console.log('id', accountId)
-    console.log('balances', balances)
-    console.log('deposit in config', this.config.deposit)
-
-    this.gameModel.set('deposit', Math.min(this.config.deposit, balances.total))
-  }
-
-  withdraw() {
-    // TODO: где? вызывается?
-    this.gameModel.set('connected', false)
-
-    this.disconnect().then(result => {
-      this.eventBus.emit(AppEvent.Disconnect)
-    })
-  }
-
-  async connect(deposit) {
+  async connect() {
     if (this.isMock) {
       this.gameAPI = new DiceMock()
       return Promise.resolve()
@@ -294,8 +216,10 @@ class App {
       try {
         this.gameAPI = new Dice()
         const { connected, balance, params } = await this.gameAPI.init()
+
         this.gameModel.set('connected', connected)
         this.gameModel.set('balance', balance)
+        this.gameModel.set('deposit', balance)
 
         params.forEach(({ type, value }) => {
           switch (type) {
@@ -312,8 +236,6 @@ class App {
           }
         })
       } catch (err) {
-        console.log('sdfsdfdf')
-        // TODO: надо красиво обработать ошибку
         console.error(err)
         return Promise.reject(err)
       }
@@ -330,24 +252,7 @@ class App {
   }
 
   disconnect() {
-    // TODO: когда она вызывается? при beforeunload и в withdraw
-    try {
-      return new Promise(resolve => {
-        this.game.disconnect().then(result => {
-          console.log('Disconnect res', result)
-
-          this.onAccountUpdate() // TODO: !
-
-          resolve(result)
-        })
-      })
-    } catch (err) {
-      console.error('Disconnect error', err)
-
-      return new Promise(resolve => {
-        resolve(null)
-      })
-    }
+    console.log('disconnect, beforeunload')
   }
 
   update(dt) {
