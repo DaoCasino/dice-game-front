@@ -147,13 +147,24 @@ export default class MainScreen extends BaseScreen {
         return
       }
 
+      if (this.gameModel.get('bet') > this.gameModel.get('betMax')) {
+        alert(`Max bet: ${this.gameModel.get('betMax')}`)
+        return
+      }
+
+      if (this.gameModel.get('bet') < this.gameModel.get('betMin')) {
+        alert(`Min bet: ${this.gameModel.get('betMin')}`)
+        return
+      }
+
       this.emit('roll')
     })
     this.betting.on('betMax', () => {
       const balance = this.gameModel.get('balance')
 
       if (balance > 0) {
-        this.gameModel.set('bet', balance)
+        const betMax = this.gameModel.get('betMax')
+        this.gameModel.set('bet', Math.min(betMax, balance))
 
         this.updateSliderValue(this.slider.get('value'))
 
@@ -180,9 +191,10 @@ export default class MainScreen extends BaseScreen {
     })
     this.betting.on('betDouble', () => {
       const balance = this.gameModel.get('balance')
+      const betMax = this.gameModel.get('betMax')
       const bet = (this.gameModel.get('bet') * 2).toFixed(4)
 
-      this.gameModel.set('bet', Math.min(balance, parseFloat(bet)))
+      this.gameModel.set('bet', Math.min(balance, betMax, parseFloat(bet)))
 
       this.updateSliderValue(this.slider.get('value'))
     })

@@ -250,6 +250,14 @@ export default class ManualBetting extends Widget {
     this.payoutValueSprite.anchor.set(0.5)
     this.payoutValueSprite.scale.set(1)
 
+    this.gameModel.on('change:betMin', () => {
+        this.betValueLabel.min = this.gameModel.get('betMin')
+    })
+
+    this.gameModel.on('change:betMax', () => {
+      this.betValueLabel.max = this.gameModel.get('betMax')
+    })
+
     this.gameModel.on('change:bet', (e) => {
       this.betValueLabel.set('text', this.gameModel.get('bet'))
       this.updateLabels()
