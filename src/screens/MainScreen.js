@@ -578,9 +578,10 @@ export default class MainScreen extends BaseScreen {
     const winChance = 100 - this.app.getWinChance(value) * 100
     const payout = this.app.getPayout(100 - value)
     const payoutOnWin = parseFloat(this.app.getPayoutOnWin(this.gameModel.get('bet'), 100 - value).toFixed(4))
+    const maxPayout = this.gameModel.get('maxPayout')
 
     this.gameModel.set('chance', winChance)
-    this.gameModel.set('payout', payoutOnWin)
+    this.gameModel.set('payout', parseFloat(Math.min(maxPayout, payoutOnWin).toFixed(2)))
 
     this.setPayoutText(payout.toFixed(2))
     this.setRollOverText(value.toFixed(0))

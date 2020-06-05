@@ -660,7 +660,7 @@ export default class ManualBetting extends Widget {
     })
 
     this.payoutValueSprite.position.set(
-      this.payoutValueLabel.get('x') - this.payoutValueLabel.get('width') - 18,
+      this.payoutValueLabel.get('x') - this.payoutValueLabel.get('width') - 24,
       this.payoutValueLabel.get('y'),
     )
     this.payoutValueSprite.visible = !this.gameModel.get('autospinMode')

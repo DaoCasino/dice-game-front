@@ -24,6 +24,7 @@ export default {
   lastRollover: 0,
   lastProfit: 0,
   payout: 0,
+  maxPayout: 1000,
   chance: 50,
   autospin: 0,
   autospinMode: false,

@@ -137,19 +137,6 @@ export default class ManualBetting extends Widget {
       height: '40px',
     })
 
-    /*
-    this.betValueLabel.on('input', value => {
-      if (value !== '') {
-        const bet = parseFloat(parseFloat(value).toFixed(4))
-        const balance = this.gameModel.get('balance')
-
-        if (!isNaN(bet)) {
-          this.gameModel.set('bet', Math.min(balance, bet))
-        }
-      }
-    })
-     */
-
     this.betValueLabel.on('focus', (value) => {
       this.rollButton.set('interactive', false)
       this.maxBetButton.set('interactive', false)

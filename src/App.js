@@ -233,6 +233,10 @@ class App {
               this.gameModel.set('betMax', this.config.betMax)
               console.log({ betMax: this.config.betMax })
               break
+            case 2:
+              this.config.maxPayout = value / 10000
+              this.gameModel.set('maxPayout', this.config.maxPayout)
+              console.log({ maxPayout: this.config.maxPayout })
           }
         })
       } catch (err) {
