@@ -137,19 +137,6 @@ export default class ManualBetting extends Widget {
       height: '40px',
     })
 
-    /*
-    this.betValueLabel.on('input', value => {
-      if (value !== '') {
-        const bet = parseFloat(parseFloat(value).toFixed(4))
-        const balance = this.gameModel.get('balance')
-
-        if (!isNaN(bet)) {
-          this.gameModel.set('bet', Math.min(balance, bet))
-        }
-      }
-    })
-     */
-
     this.betValueLabel.on('focus', (value) => {
       this.rollButton.set('interactive', false)
       this.maxBetButton.set('interactive', false)
@@ -249,6 +236,14 @@ export default class ManualBetting extends Widget {
     this.payoutValueSprite = new PIXI.Sprite(PIXI.Texture.from(Resources.get('eos_png')))
     this.payoutValueSprite.anchor.set(0.5)
     this.payoutValueSprite.scale.set(1)
+
+    this.gameModel.on('change:betMin', () => {
+        this.betValueLabel.min = this.gameModel.get('betMin')
+    })
+
+    this.gameModel.on('change:betMax', () => {
+      this.betValueLabel.max = this.gameModel.get('betMax')
+    })
 
     this.gameModel.on('change:bet', (e) => {
       this.betValueLabel.set('text', this.gameModel.get('bet'))
