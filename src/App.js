@@ -22,7 +22,8 @@ const AppEvent = {
   Connect: 'AppEventConnect',
   Disconnect: 'AppEventDisconnect',
   SpinStart: 'AppEventSpin',
-  SpinEnd: ' AppEventSpinComplete',
+  SpinEnd: 'AppEventSpinComplete',
+  SpinError: 'AppEventSpinError',
   AutoSpinEnabled: 'AppEventAutoSpinEnabled',
   AutoSpinDisabled: 'AppEventAutoSpinDisabled',
 }
@@ -171,35 +172,41 @@ class App {
     this.screen = new MainScreen(this.gameModel, this)
     this.container.addChild(this.screen)
 
-    this.screen.on('roll', () => {
+    this.screen.on('roll', async () => {
       this.eventBus.emit(AppEvent.SpinStart)
 
       console.log('roll request sent')
-      this.play().then(result => {
-        console.log('play result', result)
 
-        if (!result || (result && !result.profit)) {
-          alert('Play error...')
-        }
+      try {
+      const result = await this.play()
 
-        const { profit, randomNumber } = result
-        const spinLog = this.gameModel.get('spinLog')
+      if (!result || (result && !result.profit)) {
+        alert('Play error...')
+        return
+      }
 
-        spinLog.push({
-          prediction: 100 - this.gameModel.get('chance'),
-          amount: this.gameModel.get('bet'),
-          result: randomNumber,
-          payout: profit,
-        })
+      const { profit, randomNumber } = result
+      const spinLog = this.gameModel.get('spinLog')
 
-        this.gameModel.set('spinLog', spinLog)
-
-        this.gameModel.set(
-          'balance',
-          parseFloat((this.gameModel.get('balance') + profit).toFixed(4))
-        )
-        this.eventBus.emit(AppEvent.SpinEnd, profit, randomNumber)
+      spinLog.push({
+        prediction: 100 - this.gameModel.get('chance'),
+        amount: this.gameModel.get('bet'),
+        result: randomNumber,
+        payout: profit,
       })
+
+      this.gameModel.set('spinLog', spinLog)
+
+      this.gameModel.set(
+        'balance',
+        parseFloat((this.gameModel.get('balance') + profit).toFixed(4))
+      )
+      this.eventBus.emit(AppEvent.SpinEnd, profit, randomNumber)
+      } catch (err) {
+        console.error(err)
+        this.eventBus.emit(AppEvent.SpinError, err)
+        alert('Play error...')
+      }
     })
   }
 
@@ -250,9 +257,7 @@ class App {
     const userBet = this.gameModel.get('bet')
     const chance = this.gameModel.get('chance')
 
-    return this.gameAPI.roll(userBet, 100 - chance).catch(function (err) {
-      console.error(err)
-    })
+    return this.gameAPI.roll(userBet, 100 - chance)
   }
 
   disconnect() {

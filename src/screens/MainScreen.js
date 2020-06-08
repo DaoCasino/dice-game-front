@@ -273,6 +273,23 @@ export default class MainScreen extends BaseScreen {
       this.sliderValueButton.set('visible', false)
     })
 
+    this.eventBus.on(AppEvent.SpinError, (err) => {
+      this.resize(this.app.currWidth, this.app.currHeight)
+      if (this.gameModel.get('autospinEnabled')) {
+        this.gameModel.set('autospinEnabled', false)
+      } else {
+        this.slider.set({
+          handle: {
+            buttonMode: true,
+            interactive: true,
+          },
+        })
+      }
+
+      // this.sliderValueLine.set('visible', true)
+      // this.sliderValueButton.set('visible', true)
+    })
+
     this.eventBus.on(AppEvent.SpinEnd, (profit, rollover) => {
       this.gameModel.set('lastRollover', rollover)
       this.gameModel.set('lastProfit', profit)

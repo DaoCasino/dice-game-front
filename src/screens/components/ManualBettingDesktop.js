@@ -382,7 +382,7 @@ export default class ManualBetting extends Widget {
       }
     })
 
-    this.eventBus.on(AppEvent.SpinEnd, () => {
+    const spinEnd = () => {
       if (!this.gameModel.get('autospinMode')) {
         this.rollButton.set({
           label: {
@@ -391,7 +391,10 @@ export default class ManualBetting extends Widget {
         })
         this.rollButtonSprite.visible = false
       }
-    })
+    }
+
+    this.eventBus.on(AppEvent.SpinEnd, spinEnd)
+    this.eventBus.on(AppEvent.SpinError, spinEnd)
 
     this.spinLog = new SpinLog()
     this.spinLog.on('proof', index => {

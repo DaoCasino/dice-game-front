@@ -290,14 +290,17 @@ export default class ManualBetting extends Widget {
       this.rollButtonSprite.visible = true
     })
 
-    this.eventBus.on(AppEvent.SpinEnd, () => {
+    const spinEnd = () => {
       this.rollButton.set({
         label: {
           visible: true,
         },
       })
       this.rollButtonSprite.visible = false
-    })
+    }
+
+    this.eventBus.on(AppEvent.SpinEnd, spinEnd)
+    this.eventBus.on(AppEvent.SpinError, spinEnd)
 
     this.spinLog = new SpinLog()
     this.spinLog.on('proof', index => {
