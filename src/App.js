@@ -182,6 +182,7 @@ class App {
 
       if (!result || (result && !result.profit)) {
         alert('Play error...')
+        this.eventBus.emit(AppEvent.SpinError, null)
         return
       }
 
@@ -205,7 +206,7 @@ class App {
       } catch (err) {
         console.error(err)
         this.eventBus.emit(AppEvent.SpinError, err)
-        alert('Play error...')
+        alert('Play error')
       }
     })
   }
