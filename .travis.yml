@@ -26,6 +26,13 @@ jobs:
       script:
         - docker build -t $IMG_NAME:$IMG_TAG .
         - docker push $IMG_NAME:$IMG_TAG
+        - |
+          if [[ "$TRAVIS_PULL_REQUEST" == "false" ]]; then #tag latest image for branch
+            if [[ "$TRAVIS_BRANCH" == "develop" || "$TRAVIS_BRANCH" == "master" ]]; then
+              docker tag $IMG_NAME:$IMG_TAG $IMG_NAME:$TRAVIS_BRANCH
+              docker push $IMG_NAME:$TRAVIS_BRANCH
+            fi
+          fi
     - stage: deploy
       env:
         - *DEV_ENV
