@@ -23,7 +23,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@daocasino/platform-messaging": "^0.0.2",
+    "@daocasino/platform-messaging": "0.0.3",
     "@pixi/filter-drop-shadow": "*",
     "backbone": "^1.4.0",
     "gsap": "^2.1.2",
