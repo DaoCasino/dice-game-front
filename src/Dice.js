@@ -2,6 +2,7 @@ import utils from './utils/Utils'
 import { IframeMessagingProvider } from '@daocasino/platform-messaging/lib.browser/IframeMessagingProvider'
 
 const ACTION_TYPE = 0
+const REQUEST_TIMEOUT = 30000
 
 const checkChance = chance => {
   if (chance < 1 || chance > 99) {
@@ -22,7 +23,7 @@ export class Dice {
       const iframeMessagingProvider = await IframeMessagingProvider.create(
         'child'
       )
-      this.service = iframeMessagingProvider.getRemoteService('GameService')
+      this.service = iframeMessagingProvider.getRemoteService('GameService', REQUEST_TIMEOUT)
 
       result.connected = true
       // 2 get user balance
