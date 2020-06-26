@@ -44,7 +44,7 @@ export class Dice {
 
     try {
       let result = {}
-      const data = await this.service.newGame(deposit, ACTION_TYPE, [
+      const { data } = await this.service.newGame(deposit, ACTION_TYPE, [
         Number(number),
       ])
       result.randomNumber = data.msg[0]
