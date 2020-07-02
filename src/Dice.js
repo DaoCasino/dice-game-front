@@ -30,6 +30,12 @@ export class Dice {
       result.balance = utils.betToFloat(await this.service.getBalance())
       // 3 get game params min max bet
       result.params = await this.service.getGameParams()
+
+      document.addEventListener('keydown', (e) => {
+        if (e.keyCode === 27) {
+          this.service.emit('esc')
+        }
+      }, false)
     } catch (err) {
       console.error(err)
     }
