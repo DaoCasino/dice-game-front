@@ -1,5 +1,5 @@
 import utils from './utils/Utils'
-import { IframeMessagingProvider } from '@daocasino/platform-messaging/lib.browser/IframeMessagingProvider'
+import { getRemoteGameSerivce } from '@daocasino/platform-back-js-lib'
 
 const ACTION_TYPE = 0
 const REQUEST_TIMEOUT = 30000
@@ -20,11 +20,7 @@ export class Dice {
 
     try {
       // 1 connect iframe
-      const iframeMessagingProvider = await IframeMessagingProvider.create(
-        'child'
-      )
-      this.service = iframeMessagingProvider.getRemoteService('GameService', REQUEST_TIMEOUT)
-
+      this.service = await getRemoteGameSerivce(REQUEST_TIMEOUT)
       result.connected = true
       // 2 get user balance
       result.balance = utils.betToFloat(await this.service.getBalance())
