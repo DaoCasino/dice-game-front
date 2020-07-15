@@ -180,7 +180,7 @@ class App {
       try {
       const result = await this.play()
 
-      if (!result || (result && !result.profit)) {
+      if (!result || (result && !('profit' in result))) {
         alert('Play error...')
         this.eventBus.emit(AppEvent.SpinError, null)
         return
