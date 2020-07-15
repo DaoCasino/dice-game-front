@@ -553,7 +553,7 @@ export default class MainScreen extends BaseScreen {
     this.sliderValueLine.set({
       x: this.slider.get('x') + Utils.remap(rollover, 0, 100, 0, this.slider.get('width')),
       y: this.slider.get('y') - 8,
-      fill: profit < 0 ? '0xff6f61' : '0x61ffb1',
+      fill: profit <= 0 ? '0xff6f61' : '0x61ffb1',
     })
 
     this.sliderValueButton.set({
@@ -565,7 +565,7 @@ export default class MainScreen extends BaseScreen {
     this.sliderValueButton.set({
       background: {
         width: this.sliderValueButton.label.width + 20,
-        fill: profit < 0 ? '0xff6f61' : '0x61ffb1',
+        fill: profit <= 0 ? '0xff6f61' : '0x61ffb1',
       },
     })
 
