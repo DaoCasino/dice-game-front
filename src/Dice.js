@@ -45,6 +45,7 @@ export class Dice {
       ])
       result.randomNumber = data.msg[0]
       result.profit = utils.betToFloat(data.player_win_amount)
+      result.isWin = result.randomNumber > number
 
       console.timeEnd('roll')
       return result

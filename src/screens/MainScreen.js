@@ -290,9 +290,10 @@ export default class MainScreen extends BaseScreen {
       // this.sliderValueButton.set('visible', true)
     })
 
-    this.eventBus.on(AppEvent.SpinEnd, (profit, rollover) => {
+    this.eventBus.on(AppEvent.SpinEnd, (profit, rollover, isWin) => {
       this.gameModel.set('lastRollover', rollover)
       this.gameModel.set('lastProfit', profit)
+      this.gameModel.set('lastIsWin', isWin)
 
       this.resize(this.app.currWidth, this.app.currHeight)
 
@@ -454,6 +455,7 @@ export default class MainScreen extends BaseScreen {
 
     const profit = this.gameModel.get('lastProfit')
     const rollover = this.gameModel.get('lastRollover')
+    const isWin = this.gameModel.get('lastIsWin')
 
     this.background.set({
       width: width,
@@ -550,10 +552,12 @@ export default class MainScreen extends BaseScreen {
       this.betting.resize(isMobile ? width : width * 0.65, Utils.percent(height, bettingHeightPercent))
     }
 
+    const fill = isWin ? '0x61ffb1' :'0xff6f61'
+
     this.sliderValueLine.set({
       x: this.slider.get('x') + Utils.remap(rollover, 0, 100, 0, this.slider.get('width')),
       y: this.slider.get('y') - 8,
-      fill: profit <= 0 ? '0xff6f61' : '0x61ffb1',
+      fill,
     })
 
     this.sliderValueButton.set({
@@ -565,7 +569,7 @@ export default class MainScreen extends BaseScreen {
     this.sliderValueButton.set({
       background: {
         width: this.sliderValueButton.label.width + 20,
-        fill: profit <= 0 ? '0xff6f61' : '0x61ffb1',
+        fill,
       },
     })
 

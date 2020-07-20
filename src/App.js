@@ -186,7 +186,7 @@ class App {
         return
       }
 
-      const { profit, randomNumber } = result
+      const { profit, randomNumber, isWin } = result
       const spinLog = this.gameModel.get('spinLog')
 
       spinLog.push({
@@ -202,7 +202,7 @@ class App {
         'balance',
         parseFloat((this.gameModel.get('balance') + profit).toFixed(4))
       )
-      this.eventBus.emit(AppEvent.SpinEnd, profit, randomNumber)
+      this.eventBus.emit(AppEvent.SpinEnd, profit, randomNumber, isWin)
       } catch (err) {
         console.error(err)
         this.eventBus.emit(AppEvent.SpinError, err)
