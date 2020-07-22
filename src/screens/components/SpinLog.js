@@ -58,12 +58,12 @@ export default class SpinLog extends Widget {
     this.addChild(this.hashPopup)
 
     this.evenBus = window.eventBus
-    this.evenBus.on(AppEvent.SpinEnd, (profit, rollover) => {
+    this.evenBus.on(AppEvent.SpinEnd, (profit, rollover, isWin) => {
       if (this.label.get('visible')) {
         this.label.set('visible', false)
       }
 
-      this.createButton(profit, rollover)
+      this.createButton(profit, rollover, isWin)
     })
   }
 
@@ -81,8 +81,9 @@ export default class SpinLog extends Widget {
     this.list.update(dt)
   }
 
-  createButton(profit, rollover) {
+  createButton(profit, rollover, isWin) {
     const fontSize = 14
+    const fill = isWin ? '#61ffb1' : '#ff6f61'
     const mainButton = new Button({
       background: {
         borderRadius: 18,
@@ -103,7 +104,7 @@ export default class SpinLog extends Widget {
           x: 0,
           y: 0,
         },
-        fill: profit > 0 ? '#61ffb1' : '#ff6f61',
+        fill,
       },
     })
 
@@ -117,7 +118,7 @@ export default class SpinLog extends Widget {
         y: 0.5,
       },
       //fill: '#ffffff',
-      fill: profit > 0 ? '#61ffb1' : '#ff6f61',
+      fill,
     })
 
     rolloverLabel.set({

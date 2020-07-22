@@ -23,6 +23,7 @@ export default {
   spinLog: [],
   lastRollover: 0,
   lastProfit: 0,
+  lastIsWin: false,
   payout: 0,
   maxPayout: 1000,
   chance: 50,
