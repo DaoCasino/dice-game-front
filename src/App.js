@@ -13,7 +13,6 @@ const AppState = {
   Depositing: 'depositing',
   Spinning: 'spinning',
   Idle: 'idle',
-  Withdrawing: 'withdrawing',
 }
 
 const AppEvent = {

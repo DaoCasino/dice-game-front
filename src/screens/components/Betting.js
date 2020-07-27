@@ -70,7 +70,6 @@ export default class Betting extends PIXI.Container {
       panel.on('betMax', () => this.emit('betMax'))
       panel.on('betHalf', () => this.emit('betHalf'))
       panel.on('betDouble', () => this.emit('betDouble'))
-      panel.on('depositOrWithdraw', () => this.emit('depositOrWithdraw'))
       panel.on('autospin', (count) => this.emit('autospin', count))
       panel.on('proof', (props) => this.emit('proof', props))
 
