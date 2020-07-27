@@ -22,7 +22,6 @@ export default class BettingDesktop extends PIXI.Container {
     this.manualBetting.on('betMax', () => this.emit('betMax'))
     this.manualBetting.on('betHalf', () => this.emit('betHalf'))
     this.manualBetting.on('betDouble', () => this.emit('betDouble'))
-    this.manualBetting.on('depositOrWithdraw', () => this.emit('depositOrWithdraw'))
     this.manualBetting.on('autospin', (count) => this.emit('autospin', count))
     this.manualBetting.on('proof', (props) => this.emit('proof', props))
 

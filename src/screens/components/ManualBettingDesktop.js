@@ -82,30 +82,6 @@ export default class ManualBetting extends Widget {
     })
     this.maxBetButton.on('pointerup', () => this.emit('betMax'))
 
-    this.depositOrWithdrawButton = new Button({
-      visible: process.env.BUILD_MODE === 'development',
-      background: {
-        borderRadius: 6,
-        gradientFrom: '#f29f36',
-        gradientTo: '#e3891a',
-        width: 84,
-        height: 28,
-      },
-      label: {
-        text: 'DEPOSIT',
-        fontFamily: 'Rajdhani Bold',
-        fontSize: 14,
-        align: 'center',
-        anchor: {
-          x: 0.5,
-          y: 0.5,
-        },
-      },
-    })
-    this.depositOrWithdrawButton.on('pointerup', () => {
-      this.emit('depositOrWithdraw')
-    })
-
     this.betBackground = new Rectangle({
       fill: '0x313354',
       width: this.rollButton.get('width'),
@@ -357,8 +333,6 @@ export default class ManualBetting extends Widget {
         this.maxBetButton.set('disable', false)
         this.betHalfButton.set('disable', false)
         this.betDoubleButton.set('disable', false)
-        this.depositOrWithdrawButton.set('disable', false)
-        this.depositOrWithdrawButton.set('text', 'WITHDRAW')
 
       } else {
         this.rollButton.set('disable', true)
@@ -366,7 +340,6 @@ export default class ManualBetting extends Widget {
         this.maxBetButton.set('disable', true)
         this.betHalfButton.set('disable', true)
         this.betDoubleButton.set('disable', true)
-        this.depositOrWithdrawButton.set('disable', true)
       }
     })
 
@@ -407,7 +380,6 @@ export default class ManualBetting extends Widget {
     this.addChild(this.autospinLabel)
     this.addChild(this.rollButtonSprite)
     this.addChild(this.maxBetButton)
-    this.addChild(this.depositOrWithdrawButton)
     this.addChild(this.betBackground)
     this.addChild(this.betLabel)
     this.addChild(this.betValueSprite)
@@ -716,15 +688,6 @@ export default class ManualBetting extends Widget {
           width: width,
         },
       })
-    })
-
-    this.depositOrWithdrawButton.set({
-      visible: false,
-      x: this.rollButton.get('width') + 14,
-      y: this.maxBetButton.get('y') + this.rollButton.get('height') / 2 + this.depositOrWithdrawButton.get('height') / 2 + 25,
-      background: {
-        width: this.betHalfButton.get('width') + this.betDoubleButton.get('width') + 6,
-      },
     })
 
     this.rollButtonSprite.x = this.rollButton.get('x') + this.rollButton.get('width') / 2

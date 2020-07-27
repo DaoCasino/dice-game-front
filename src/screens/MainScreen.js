@@ -174,9 +174,6 @@ export default class MainScreen extends BaseScreen {
         alert('Invalid balance!')
       }
     })
-    this.betting.on('depositOrWithdraw', () => {
-      this.emit('depositOrWithdraw')
-    })
     this.betting.on('betHalf', () => {
       const balance = this.gameModel.get('balance')
       const bet = (this.gameModel.get('bet') / 2).toFixed(4)
