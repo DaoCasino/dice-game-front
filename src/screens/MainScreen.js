@@ -334,14 +334,16 @@ export default class MainScreen extends BaseScreen {
           }
 
           const bet = this.gameModel.get('bet')
+          const balance = this.gameModel.get('balance') // TODO: need get real current balance
+          const betMax = this.gameModel.get('betMax')
 
           const betOnLoss = this.gameModel.get('betOnLoss')
           const betOnLossAction = this.gameModel.get('betOnLossAction')
 
           if (betOnLoss > 0 && profit < 0) {
             if (betOnLossAction === 'increase') {
-              this.gameModel.set('bet', Math.min(this.gameModel.get('balance'), parseFloat((bet + bet * betOnLoss / 100).toFixed(4))))
-
+              const newBet = Math.min(balance, parseFloat((bet + bet * betOnLoss / 100)))
+              this.gameModel.set('bet', Math.min(betMax, newBet))
             } else if (betOnLossAction === 'decrease') {
               this.gameModel.set('bet', Math.max(this.gameModel.get('betMin'), parseFloat((bet - bet * betOnLoss / 100).toFixed(4))))
             }
