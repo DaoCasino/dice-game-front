@@ -78,11 +78,19 @@ class App {
       ]
     )
 
+    await this.connect()
+
     await this.loadFont()
     await this.loadResources()
 
+    this.releaseLoader()
     this.initInterface()
-    await this.connect()
+  }
+
+  releaseLoader() {
+    document.body.removeChild(
+      document.body.getElementsByClassName('loading')[0]
+    )
   }
 
   loadResources() {
