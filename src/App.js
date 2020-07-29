@@ -85,6 +85,8 @@ class App {
 
     this.releaseLoader()
     this.initInterface()
+
+    this.gameModel.set('connected', true)
   }
 
   releaseLoader() {
@@ -232,7 +234,6 @@ class App {
         this.gameAPI = new Dice()
         const { connected, balance, params } = await this.gameAPI.init()
 
-        this.gameModel.set('connected', connected)
         this.gameModel.set('balance', balance)
         this.gameModel.set('deposit', balance)
 

@@ -325,8 +325,6 @@ export default class ManualBetting extends Widget {
     })
 
     this.gameModel.on('change:connected', (e) => {
-      console.log(e.changed.connected)
-
       if (e.changed.connected) {
         this.rollButton.set('disable', false)
         this.betValueLabel.set('disable', false)
