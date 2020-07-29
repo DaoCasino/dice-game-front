@@ -58,7 +58,7 @@ class App {
     console.log(process.env)
     console.log(
       '%c init started',
-      'padding: 7px; background: #005918; color: #ffffff; font: 1.3rem/1 Arial;'
+      'padding: 7px; background: #005918; color: #ffffff; font: 1.3rem/1 Arial;',
     )
 
     this.isMock =
@@ -75,7 +75,7 @@ class App {
       'autospin',
       this.gameModel.get('autospinVariations')[
         this.gameModel.get('autospinVariationIndex')
-      ]
+        ],
     )
 
     await this.connect()
@@ -85,11 +85,13 @@ class App {
 
     this.releaseLoader()
     this.initInterface()
+
+    this.gameModel.set('connected', true)
   }
 
   releaseLoader() {
     document.body.removeChild(
-      document.body.getElementsByClassName('loading')[0]
+      document.body.getElementsByClassName('loading')[0],
     )
   }
 
@@ -97,13 +99,13 @@ class App {
     return new Promise(resolve => {
       console.log(
         '%c loading resources',
-        'padding: 7px; background: #ab5e00; color: #ffffff; font: 1.3rem/1 Arial;'
+        'padding: 7px; background: #ab5e00; color: #ffffff; font: 1.3rem/1 Arial;',
       )
       Resources.urlMap = this.config.resources.images
       Resources.loadAll().then(() => {
         console.log(
           '%c resources loaded',
-          'padding: 7px; background: #005918; color: #ffffff; font: 1.3rem/1 Arial;'
+          'padding: 7px; background: #005918; color: #ffffff; font: 1.3rem/1 Arial;',
         )
         resolve()
       })
@@ -114,7 +116,7 @@ class App {
     return new Promise(resolve => {
       console.log(
         '%c loading fonts',
-        'padding: 7px; background: #ab5e00; color: #ffffff; font: 1.3rem/1 Arial;'
+        'padding: 7px; background: #ab5e00; color: #ffffff; font: 1.3rem/1 Arial;',
       )
       WebFont.load({
         custom: {
@@ -123,7 +125,7 @@ class App {
         active: () => {
           console.log(
             '%c fonts loaded',
-            'padding: 7px; background: #005918; color: #ffffff; font: 1.3rem/1 Arial;'
+            'padding: 7px; background: #005918; color: #ffffff; font: 1.3rem/1 Arial;',
           )
           resolve()
         },
@@ -134,7 +136,7 @@ class App {
   async initInterface() {
     console.log(
       '%c init interface start',
-      'padding: 7px; background: #ab5e00; color: #ffffff; font: 1.3rem/1 Arial;'
+      'padding: 7px; background: #ab5e00; color: #ffffff; font: 1.3rem/1 Arial;',
     )
     this.initCanvas()
     this.initPIXI()
@@ -143,7 +145,7 @@ class App {
     this.resize()
     console.log(
       '%c init interface finished',
-      'padding: 7px; background: #005918; color: #ffffff; font: 1.3rem/1 Arial;'
+      'padding: 7px; background: #005918; color: #ffffff; font: 1.3rem/1 Arial;',
     )
   }
 
@@ -185,31 +187,31 @@ class App {
       console.log('roll request sent')
 
       try {
-      const result = await this.play()
+        const result = await this.play()
 
-      if (!result || (result && !('profit' in result))) {
-        alert('Play error...')
-        this.eventBus.emit(AppEvent.SpinError, null)
-        return
-      }
+        if (!result || (result && !('profit' in result))) {
+          alert('Play error...')
+          this.eventBus.emit(AppEvent.SpinError, null)
+          return
+        }
 
-      const { profit, randomNumber, isWin } = result
-      const spinLog = this.gameModel.get('spinLog')
+        const { profit, randomNumber, isWin } = result
+        const spinLog = this.gameModel.get('spinLog')
 
-      spinLog.push({
-        prediction: 100 - this.gameModel.get('chance'),
-        amount: this.gameModel.get('bet'),
-        result: randomNumber,
-        payout: profit,
-      })
+        spinLog.push({
+          prediction: 100 - this.gameModel.get('chance'),
+          amount: this.gameModel.get('bet'),
+          result: randomNumber,
+          payout: profit,
+        })
 
-      this.gameModel.set('spinLog', spinLog)
+        this.gameModel.set('spinLog', spinLog)
 
-      this.gameModel.set(
-        'balance',
-        parseFloat((this.gameModel.get('balance') + profit).toFixed(4))
-      )
-      this.eventBus.emit(AppEvent.SpinEnd, profit, randomNumber, isWin)
+        this.gameModel.set(
+          'balance',
+          parseFloat((this.gameModel.get('balance') + profit).toFixed(4)),
+        )
+        this.eventBus.emit(AppEvent.SpinEnd, profit, randomNumber, isWin)
       } catch (err) {
         console.error(err)
         this.eventBus.emit(AppEvent.SpinError, err)
@@ -232,7 +234,6 @@ class App {
         this.gameAPI = new Dice()
         const { connected, balance, params } = await this.gameAPI.init()
 
-        this.gameModel.set('connected', connected)
         this.gameModel.set('balance', balance)
         this.gameModel.set('deposit', balance)
 
