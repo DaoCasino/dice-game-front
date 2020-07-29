@@ -197,25 +197,6 @@ export default class Proof extends Widget {
       },
     })
 
-    this.proofButton = new Button({
-      background: {
-        borderRadius: 8,
-        gradientFrom: '#5792f0',
-        gradientTo: '#6e62e4',
-        height: 44,
-      },
-      label: {
-        text: 'VIEW PROOF',
-        fontFamily: 'Rajdhani Bold',
-        fontSize: 16,
-        align: 'center',
-        anchor: {
-          x: 0.5,
-          y: 0.5,
-        },
-      },
-    })
-
     this.addChild(this.blackout)
     this.addChild(this.background)
     this.addChild(this.list)
@@ -231,7 +212,6 @@ export default class Proof extends Widget {
     this.content.addChild(this.resultValueLabel)
     this.content.addChild(this.payoutLabel)
     this.content.addChild(this.payoutValueLabel)
-    this.content.addChild(this.proofButton)
   }
 
   update(dt) {
@@ -322,17 +302,6 @@ export default class Proof extends Widget {
     this.payoutValueLabel.set({
       x: this.payoutLabel.get('x'),
       y: this.payoutLabel.get('y') + this.payoutLabel.get('height') + 10,
-    })
-
-    this.proofButton.set({
-      background: {
-        width: this.background.get('width') - 48,
-      },
-    })
-
-    this.proofButton.set({
-      x: this.list.get('x') + this.background.get('width') / 2 - this.proofButton.get('width') / 2,
-      y: this.list.get('y') + this.background.get('height') - this.proofButton.get('height') - 44,
     })
 
     this.closeButton.set({
