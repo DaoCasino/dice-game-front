@@ -1,7 +1,7 @@
 export class DiceMock {
     roll(bet, number){
       this.checkChance(number)
-      return Promise.resolve({ randomNumber: 50, profit: 0.98 })
+      return Promise.resolve({ randomNumber: 50, profit: 0.98, isWin: false })
     }
 
     checkChance(chance) {

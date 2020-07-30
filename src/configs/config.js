@@ -1,15 +1,14 @@
 import resources from './resources'
-import platform from './platform.config.js'
 
 export default {
-  platform,
+
   resources: resources,
   connected: false,
 
   deposit: process.env.BUILD_MODE === 'development' ? 1 : 5,
   bet: process.env.BUILD_MODE === 'development' ? 1 : 1,
   betMin: process.env.BUILD_MODE === 'development' ? 1 : 1,
-  betMax: process.env.BUILD_MODE === 'development' ? 1000000 : 1000000,
+  betMax: process.env.BUILD_MODE === 'development' ? 10: 10,
   betOnWin: 0,
   betOnWinIncreaseMax: 1000,
   betOnWinDecreaseMax: 99,
@@ -24,7 +23,9 @@ export default {
   spinLog: [],
   lastRollover: 0,
   lastProfit: 0,
+  lastIsWin: false,
   payout: 0,
+  maxPayout: 1000,
   chance: 50,
   autospin: 0,
   autospinMode: false,

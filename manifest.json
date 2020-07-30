@@ -1,8 +1,9 @@
 {
     "name": "Dice",
     "icons": {
-        "small": "/poster.png",
-        "big": "/bg.png"
+        "small": "/163x238_dc.png",
+        "big": "/320x222_dc.png",
+        "background": "/bg.png"
     },
     "description": "lorem ipsum",
     "text": "lorem ipsum",

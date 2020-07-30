@@ -4,10 +4,6 @@ import WebFont from 'webfontloader'
 import { Dice } from './Dice'
 import { DiceMock } from './DiceMock'
 
-import utils from './utils/Utils'
-
-import { connect, GameParamsType } from '@daocasino/platform-back-js-lib'
-
 import MainScreen from './screens/MainScreen'
 import DeepModel from './utils/DeepModel'
 import Resources from './utils/Resources'
@@ -17,7 +13,6 @@ const AppState = {
   Depositing: 'depositing',
   Spinning: 'spinning',
   Idle: 'idle',
-  Withdrawing: 'withdrawing',
 }
 
 const AppEvent = {
@@ -26,7 +21,8 @@ const AppEvent = {
   Connect: 'AppEventConnect',
   Disconnect: 'AppEventDisconnect',
   SpinStart: 'AppEventSpin',
-  SpinEnd: ' AppEventSpinComplete',
+  SpinEnd: 'AppEventSpinComplete',
+  SpinError: 'AppEventSpinError',
   AutoSpinEnabled: 'AppEventAutoSpinEnabled',
   AutoSpinDisabled: 'AppEventAutoSpinDisabled',
 }
@@ -62,7 +58,7 @@ class App {
     console.log(process.env)
     console.log(
       '%c init started',
-      'padding: 7px; background: #005918; color: #ffffff; font: 1.3rem/1 Arial;'
+      'padding: 7px; background: #005918; color: #ffffff; font: 1.3rem/1 Arial;',
     )
 
     this.isMock =
@@ -79,28 +75,37 @@ class App {
       'autospin',
       this.gameModel.get('autospinVariations')[
         this.gameModel.get('autospinVariationIndex')
-      ]
+        ],
     )
+
+    await this.connect()
 
     await this.loadFont()
     await this.loadResources()
-    this.setDefaultValues()
+
+    this.releaseLoader()
     this.initInterface()
-    await this.connect()
-    this.onGameReady()
+
+    this.gameModel.set('connected', true)
+  }
+
+  releaseLoader() {
+    document.body.removeChild(
+      document.body.getElementsByClassName('loading')[0],
+    )
   }
 
   loadResources() {
     return new Promise(resolve => {
       console.log(
         '%c loading resources',
-        'padding: 7px; background: #ab5e00; color: #ffffff; font: 1.3rem/1 Arial;'
+        'padding: 7px; background: #ab5e00; color: #ffffff; font: 1.3rem/1 Arial;',
       )
       Resources.urlMap = this.config.resources.images
       Resources.loadAll().then(() => {
         console.log(
           '%c resources loaded',
-          'padding: 7px; background: #005918; color: #ffffff; font: 1.3rem/1 Arial;'
+          'padding: 7px; background: #005918; color: #ffffff; font: 1.3rem/1 Arial;',
         )
         resolve()
       })
@@ -111,7 +116,7 @@ class App {
     return new Promise(resolve => {
       console.log(
         '%c loading fonts',
-        'padding: 7px; background: #ab5e00; color: #ffffff; font: 1.3rem/1 Arial;'
+        'padding: 7px; background: #ab5e00; color: #ffffff; font: 1.3rem/1 Arial;',
       )
       WebFont.load({
         custom: {
@@ -120,7 +125,7 @@ class App {
         active: () => {
           console.log(
             '%c fonts loaded',
-            'padding: 7px; background: #005918; color: #ffffff; font: 1.3rem/1 Arial;'
+            'padding: 7px; background: #005918; color: #ffffff; font: 1.3rem/1 Arial;',
           )
           resolve()
         },
@@ -128,18 +133,10 @@ class App {
     })
   }
 
-  setDefaultValues() {
-    // this.gameModel.set('balance', this.gameModel.get('deposit'))
-    console.log(
-      '%c default values set',
-      'padding: 7px; background: #005918; color: #ffffff; font: 1.3rem/1 Arial;'
-    )
-  }
-
   async initInterface() {
     console.log(
       '%c init interface start',
-      'padding: 7px; background: #ab5e00; color: #ffffff; font: 1.3rem/1 Arial;'
+      'padding: 7px; background: #ab5e00; color: #ffffff; font: 1.3rem/1 Arial;',
     )
     this.initCanvas()
     this.initPIXI()
@@ -148,7 +145,7 @@ class App {
     this.resize()
     console.log(
       '%c init interface finished',
-      'padding: 7px; background: #005918; color: #ffffff; font: 1.3rem/1 Arial;'
+      'padding: 7px; background: #005918; color: #ffffff; font: 1.3rem/1 Arial;',
     )
   }
 
@@ -184,18 +181,21 @@ class App {
     this.screen = new MainScreen(this.gameModel, this)
     this.container.addChild(this.screen)
 
-    this.screen.on('roll', () => {
+    this.screen.on('roll', async () => {
       this.eventBus.emit(AppEvent.SpinStart)
 
       console.log('roll request sent')
-      this.play().then(result => {
-        console.log('play result', result)
 
-        if (!result || (result && !result.profit)) {
+      try {
+        const result = await this.play()
+
+        if (!result || (result && !('profit' in result))) {
           alert('Play error...')
+          this.eventBus.emit(AppEvent.SpinError, null)
+          return
         }
 
-        const { profit, randomNumber } = result
+        const { profit, randomNumber, isWin } = result
         const spinLog = this.gameModel.get('spinLog')
 
         spinLog.push({
@@ -209,12 +209,14 @@ class App {
 
         this.gameModel.set(
           'balance',
-          parseFloat(
-            (this.gameModel.get('balance') + profit).toFixed(4)
-          )
+          parseFloat((this.gameModel.get('balance') + profit).toFixed(4)),
         )
-        this.eventBus.emit(AppEvent.SpinEnd, profit, randomNumber)
-      })
+        this.eventBus.emit(AppEvent.SpinEnd, profit, randomNumber, isWin)
+      } catch (err) {
+        console.error(err)
+        this.eventBus.emit(AppEvent.SpinError, err)
+        alert('Play error')
+      }
     })
   }
 
@@ -223,125 +225,37 @@ class App {
     this.app.ticker.add(this.update, this)
   }
 
-  async initAPI() {
-    console.log(
-      '%c init API start',
-      'padding: 7px; background: #ab5e00; color: #ffffff; font: 1.3rem/1 Arial;'
-    )
-    console.groupCollapsed('Init DC Web Api')
-    console.table(this.dcconfig.dcapi)
-    console.table(this.dcconfig.game)
-    console.groupEnd()
-
-    if (this.isMock) {
-      console.log(
-        '%c init Mock API finished',
-        'padding: 7px; background: #005918; color: #ffffff; font: 1.3rem/1 Arial;'
-      )
-    } else {
-      console.log(
-        '%c create game',
-        'padding: 7px; background: #ab5e00; color: #ffffff; font: 1.3rem/1 Arial;'
-      )
-      const { game, account } = await this.API.init()
-      this.game = game
-      this.account = account
-
-      const address = await this.account.getAddress()
-      this.gameModel.set('playerId', address)
-      await this.game.createGame(this.dcconfig.game)
-      await this.onAccountUpdate()
-      console.log(
-        '%c game successfully created',
-        'padding: 7px; background: #005918; color: #ffffff; font: 1.3rem/1 Arial;'
-      )
-    }
-
-    return Promise.resolve()
-  }
-
-  async onGameReady() {
-    this.gameModel.set({
-      connected: true,
-      balance: this.gameModel.get('deposit'),
-    })
-  }
-
-  async onAccountUpdate() {
-    // TODO: переделать
-    const address = await this.account.getAddress()
-    const accountId = await this.account.getAccountId()
-    const balances = await this.account.getBalances()
-
-    console.log('address', address)
-    console.log('id', accountId)
-    console.log('balances', balances)
-    console.log('deposit in config', this.config.deposit)
-
-    this.gameModel.set('deposit', Math.min(this.config.deposit, balances.total))
-  }
-
-  withdraw() {
-    // TODO: где? вызывается?
-    this.gameModel.set('connected', false)
-
-    this.disconnect().then(result => {
-      this.eventBus.emit(AppEvent.Disconnect)
-    })
-  }
-
-  async connect(deposit) {
+  async connect() {
     if (this.isMock) {
       this.gameAPI = new DiceMock()
       return Promise.resolve()
     } else {
-      const { backendAdrr, userName, casinoId, gameId } = this.config.platform
       try {
-        const api = await connect(backendAdrr, { secure: false })
-        const creds = await api.getToken(userName)
-        await api.auth(creds)
+        this.gameAPI = new Dice()
+        const { connected, balance, params } = await this.gameAPI.init()
 
-        const accountInfo = await api.accountInfo()
+        this.gameModel.set('balance', balance)
+        this.gameModel.set('deposit', balance)
 
-        // Init Default values
-        const getBalance = async () => {
-          const { balance } = accountInfo
-          if (!balance) {
-            throw new Error('No field balance in accountInfo')
+        params.forEach(({ type, value }) => {
+          switch (type) {
+            case 0:
+              this.config.betMin = value / 10000
+              this.gameModel.set('betMin', this.config.betMin)
+              console.log({ betMin: this.config.betMin })
+              break
+            case 1:
+              this.config.betMax = value / 10000
+              this.gameModel.set('betMax', this.config.betMax)
+              console.log({ betMax: this.config.betMax })
+              break
+            case 2:
+              this.config.maxPayout = value / 10000
+              this.gameModel.set('maxPayout', this.config.maxPayout)
+              console.log({ maxPayout: this.config.maxPayout })
           }
-          return utils.betToFloat(balance)
-        }
-
-        this.config.balance = await getBalance(accountInfo)
-        this.gameModel.set('balance', this.config.balance)
-        this.gameModel.set('deposit', this.config.balance)
-
-        const setMinMaxBets = async () => {
-          // TODO: не очень красиво и правильно
-          const { params } = (await api.fetchGamesInCasino(casinoId)).filter(game => game.gameId === gameId)[0]
-          params.forEach(({ type, value }) => {
-            switch (type) {
-              case GameParamsType.minBet:
-                this.config.betMin = value / 10000
-                this.gameModel.set('betMin', this.config.betMin)
-                console.log({ betMin: this.config.betMin })
-                break
-              case GameParamsType.maxBet:
-                this.config.betMax = value / 10000
-                this.gameModel.set('betMax', this.config.betMax)
-                console.log({ betMax: this.config.betMax })
-                break
-            }
-          })
-        }
-
-        await setMinMaxBets()
-        this.setDefaultValues()
-
-        this.gameAPI = new Dice(this.config, api)
+        })
       } catch (err) {
-        console.log('sdfsdfdf')
-        // TODO: надо красиво обработать ошибку
         console.error(err)
         return Promise.reject(err)
       }
@@ -352,30 +266,11 @@ class App {
     const userBet = this.gameModel.get('bet')
     const chance = this.gameModel.get('chance')
 
-    return this.gameAPI.roll(userBet, 100 - chance).catch(function (err) {
-      console.error(err)
-    })
+    return this.gameAPI.roll(userBet, 100 - chance)
   }
 
   disconnect() {
-    // TODO: когда она вызывается? при beforeunload и в withdraw
-    try {
-      return new Promise(resolve => {
-        this.game.disconnect().then(result => {
-          console.log('Disconnect res', result)
-
-          this.onAccountUpdate() // TODO: !
-
-          resolve(result)
-        })
-      })
-    } catch (err) {
-      console.error('Disconnect error', err)
-
-      return new Promise(resolve => {
-        resolve(null)
-      })
-    }
+    console.log('disconnect, beforeunload')
   }
 
   update(dt) {
