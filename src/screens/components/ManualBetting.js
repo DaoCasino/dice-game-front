@@ -232,7 +232,7 @@ export default class ManualBetting extends Widget {
     })
 
     this.gameModel.on('change:balance', () => {
-      this.betValueLabel.set('max', this.gameModel.get('balance'))
+      this.betValueLabel.set('max', Math.min(this.gameModel.get('betMax'), this.gameModel.get('balance')))
       this.updateButtons()
     })
 
