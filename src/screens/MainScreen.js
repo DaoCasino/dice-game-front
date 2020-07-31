@@ -342,7 +342,7 @@ export default class MainScreen extends BaseScreen {
 
           if (betOnLoss > 0 && profit < 0) {
             if (betOnLossAction === 'increase') {
-              const newBet = Math.min(balance, parseFloat((bet + bet * betOnLoss / 100)).toFixed(4))
+              const newBet = Math.min(balance, parseFloat((bet + bet * betOnLoss / 100).toFixed(4)))
               this.gameModel.set('bet', Math.min(betMax, newBet))
             } else if (betOnLossAction === 'decrease') {
               this.gameModel.set('bet', Math.max(this.gameModel.get('betMin'), parseFloat((bet - bet * betOnLoss / 100).toFixed(4))))
@@ -354,7 +354,7 @@ export default class MainScreen extends BaseScreen {
 
           if (betOnWin > 0 && profit > 0) {
             if (betOnWinAction === 'increase') {
-              const newBet = Math.min(balance, parseFloat((bet + bet * betOnWin / 100)).toFixed(4))
+              const newBet = Math.min(balance, parseFloat((bet + bet * betOnWin / 100).toFixed(4)))
               this.gameModel.set('bet', Math.min(betMax, newBet))
             } else if (betOnWinAction === 'decrease') {
               this.gameModel.set('bet', Math.max(this.gameModel.get('betMin'), parseFloat((bet - bet * betOnWin / 100).toFixed(4))))
