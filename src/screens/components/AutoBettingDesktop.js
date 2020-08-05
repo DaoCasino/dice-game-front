@@ -335,7 +335,7 @@ export default class AutoBettingDesktop extends Widget {
 
         this.onWinValueLabel.set('text', 0)
         this.onWinValueLabelPercent.set({
-          x: this.onWinValueLabel.get('x') + (this.onWinValueLabel.getTextWidth()) + 2.5,
+          x: this.onWinValueLabel.get('x') + (this.onWinValueLabel.getTextWidth()) + 5,
           y: this.onWinValueLabel.get('y'),
           visible: true,
         })
@@ -401,7 +401,7 @@ export default class AutoBettingDesktop extends Widget {
       }
 
       this.onWinValueLabelPercent.set({
-        x: this.onWinValueLabel.get('x') + (this.onWinValueLabel.getTextWidth()) + 2.5,
+        x: this.onWinValueLabel.get('x') + (this.onWinValueLabel.getTextWidth()) + 5,
         y: this.onWinValueLabel.get('y'),
         visible: this.onWinValueLabel.getTextWidth() < this.onWinValueLabel.get('width'),
       })
@@ -413,7 +413,7 @@ export default class AutoBettingDesktop extends Widget {
       }
 
       this.onWinValueLabelPercent.set({
-        x: this.onWinValueLabel.get('x') + (this.onWinValueLabel.getTextWidth()) + 2.5,
+        x: this.onWinValueLabel.get('x') + (this.onWinValueLabel.getTextWidth()) + 5,
         y: this.onWinValueLabel.get('y'),
         visible: this.onWinValueLabel.getTextWidth() < this.onWinValueLabel.get('width'),
       })
@@ -430,7 +430,7 @@ export default class AutoBettingDesktop extends Widget {
       console.log('blur', value)
 
       this.onWinValueLabelPercent.set({
-        x: this.onWinValueLabel.get('x') + (this.onWinValueLabel.getTextWidth()) + 2.5,
+        x: this.onWinValueLabel.get('x') + (this.onWinValueLabel.getTextWidth()) + 5,
         y: this.onWinValueLabel.get('y'),
         visible: this.onWinValueLabel.getTextWidth() < this.onWinValueLabel.get('width'),
       })
@@ -507,7 +507,7 @@ export default class AutoBettingDesktop extends Widget {
 
         this.onLossValueLabel.set('text', 0)
         this.onLossValueLabelPercent.set({
-          x: this.onLossValueLabel.get('x') + (this.onLossValueLabel.getTextWidth()) + 2.5,
+          x: this.onLossValueLabel.get('x') + (this.onLossValueLabel.getTextWidth()) + 5,
           y: this.onLossValueLabel.get('y'),
           visible: true,
         })
@@ -572,7 +572,7 @@ export default class AutoBettingDesktop extends Widget {
       }
 
       this.onLossValueLabelPercent.set({
-        x: this.onLossValueLabel.get('x') + (this.onLossValueLabel.getTextWidth()) + 2.5,
+        x: this.onLossValueLabel.get('x') + (this.onLossValueLabel.getTextWidth()) + 5,
         y: this.onLossValueLabel.get('y'),
         visible: this.onLossValueLabel.getTextWidth() < this.onLossValueLabel.get('width'),
       })
@@ -584,7 +584,7 @@ export default class AutoBettingDesktop extends Widget {
       }
 
       this.onLossValueLabelPercent.set({
-        x: this.onLossValueLabel.get('x') + (this.onLossValueLabel.getTextWidth()) + 2.5,
+        x: this.onLossValueLabel.get('x') + (this.onLossValueLabel.getTextWidth()) + 5,
         y: this.onLossValueLabel.get('y'),
         visible: this.onLossValueLabel.getTextWidth() < this.onLossValueLabel.get('width'),
       })
@@ -599,7 +599,7 @@ export default class AutoBettingDesktop extends Widget {
       }
 
       this.onLossValueLabelPercent.set({
-        x: this.onLossValueLabel.get('x') + (this.onLossValueLabel.getTextWidth()) + 2.5,
+        x: this.onLossValueLabel.get('x') + (this.onLossValueLabel.getTextWidth()) + 5,
         y: this.onLossValueLabel.get('y'),
         visible: this.onLossValueLabel.getTextWidth() < this.onLossValueLabel.get('width'),
       })
@@ -842,7 +842,7 @@ export default class AutoBettingDesktop extends Widget {
     })
 
     this.onWinValueLabelPercent.set({
-      x: this.onWinValueLabel.get('x') + (this.onWinValueLabel.getTextWidth()) + 2.5,
+      x: this.onWinValueLabel.get('x') + (this.onWinValueLabel.getTextWidth()) + 5,
       y: this.onWinValueLabel.get('y'),
       visible: this.onWinValueLabel.get('text').length > 0 && this.onWinValueLabel.getTextWidth() < this.onWinValueLabel.get('width'),
     })
@@ -868,7 +868,7 @@ export default class AutoBettingDesktop extends Widget {
     })
 
     this.onLossValueLabelPercent.set({
-      x: this.onLossValueLabel.get('x') + (this.onLossValueLabel.getTextWidth()) + 2.5,
+      x: this.onLossValueLabel.get('x') + (this.onLossValueLabel.getTextWidth()) + 5,
       y: this.onLossValueLabel.get('y'),
       visible: this.onLossValueLabel.get('text').length > 0 && this.onLossValueLabel.getTextWidth() < this.onLossValueLabel.get('width'),
     })
