@@ -551,6 +551,11 @@ export default class ManualBetting extends Widget {
   updateLabels() {
     this.betValueLabel.set('text', this.gameModel.get('bet'))
     this.payoutValueLabel.set('text', this.gameModel.get('payout'))
+
+    this.payoutValueSprite.position.set(
+      this.payoutValueLabel.get('x') - this.payoutValueLabel.get('width') - 18,
+      this.payoutValueLabel.get('y'),
+    )
   }
 
   updateButtons() {
@@ -560,12 +565,11 @@ export default class ManualBetting extends Widget {
     if (bet > balance || balance === 0) {
       this.rollButton.set('disable', true)
       this.maxBetButton.set('disable', true)
-    }
-    else {
+    } else {
       this.rollButton.set('disable', false)
       this.maxBetButton.set('disable', false)
     }
-    
+
   }
 
   update(dt) {
