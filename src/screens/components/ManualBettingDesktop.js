@@ -345,6 +345,7 @@ export default class ManualBetting extends Widget {
     this.eventBus.on(AppEvent.SpinStart, () => {
       if (!this.gameModel.get('autospinMode')) {
         this.rollButton.set({
+          disable: true,
           label: {
             visible: false,
           },
@@ -356,6 +357,7 @@ export default class ManualBetting extends Widget {
     const spinEnd = () => {
       if (!this.gameModel.get('autospinMode')) {
         this.rollButton.set({
+          disable: false,
           label: {
             visible: true,
           },
