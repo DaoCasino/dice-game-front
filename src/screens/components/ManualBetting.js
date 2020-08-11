@@ -256,6 +256,7 @@ export default class ManualBetting extends Widget {
     this.eventBus = window.eventBus
     this.eventBus.on(AppEvent.SpinStart, () => {
       this.rollButton.set({
+        disable: true,
         label: {
           visible: false,
         },
@@ -265,6 +266,7 @@ export default class ManualBetting extends Widget {
 
     const spinEnd = () => {
       this.rollButton.set({
+        disable: false,
         label: {
           visible: true,
         },
