@@ -20,7 +20,7 @@ export default class Betting extends PIXI.Container {
 
     this.mask = new PIXI.Graphics()
 
-    const tabLabelStyle = {
+    const tabLabelStyle = { 
       fill: '0xffffff',
       fontFamily: 'Rajdhani',
       align: 'center',

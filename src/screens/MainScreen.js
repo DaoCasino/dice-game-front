@@ -231,6 +231,7 @@ export default class MainScreen extends BaseScreen {
       this.sliderValueButton.set('visible', false)
 
       this.updateSliderValue(this.slider.get('value'))
+      this.updateWinChance()
     })
 
     this.gameModel.on('change:autospinEnabled', (e) => {
@@ -342,7 +343,7 @@ export default class MainScreen extends BaseScreen {
 
           if (betOnLoss > 0 && profit < 0) {
             if (betOnLossAction === 'increase') {
-              const newBet = Math.min(balance, parseFloat((bet + bet * betOnLoss / 100)))
+              const newBet = Math.min(balance, parseFloat((bet + bet * betOnLoss / 100).toFixed(4)))
               this.gameModel.set('bet', Math.min(betMax, newBet))
             } else if (betOnLossAction === 'decrease') {
               this.gameModel.set('bet', Math.max(this.gameModel.get('betMin'), parseFloat((bet - bet * betOnLoss / 100).toFixed(4))))
@@ -354,8 +355,8 @@ export default class MainScreen extends BaseScreen {
 
           if (betOnWin > 0 && profit > 0) {
             if (betOnWinAction === 'increase') {
-              this.gameModel.set('bet', Math.min(this.gameModel.get('balance'), parseFloat((bet + bet * betOnWin / 100).toFixed(4))))
-
+              const newBet = Math.min(balance, parseFloat((bet + bet * betOnWin / 100).toFixed(4)))
+              this.gameModel.set('bet', Math.min(betMax, newBet))
             } else if (betOnWinAction === 'decrease') {
               this.gameModel.set('bet', Math.max(this.gameModel.get('betMin'), parseFloat((bet - bet * betOnWin / 100).toFixed(4))))
             }
@@ -593,18 +594,28 @@ export default class MainScreen extends BaseScreen {
     this.proof.redraw()
   }
 
-
-  updateSliderValue(value) {
+  updateWinChance() {
+    const value = this.gameModel.get('sliderValue')
     const winChance = 100 - this.app.getWinChance(value) * 100
     const payout = this.app.getPayout(100 - value)
     const payoutOnWin = parseFloat(this.app.getPayoutOnWin(this.gameModel.get('bet'), 100 - value).toFixed(4))
     const maxPayout = this.gameModel.get('maxPayout')
 
     this.gameModel.set('chance', winChance)
+    this.gameModel.set('sliderValue', value)
     this.gameModel.set('payout', parseFloat(Math.min(maxPayout, payoutOnWin).toFixed(2)))
+  }
 
-    this.setPayoutText(payout.toFixed(2))
+  updateSliderValue(value) {
+    this.gameModel.set('sliderValue', value)
+
+    const winChance = 100 - this.app.getWinChance(value) * 100
+    const payout = this.app.getPayout(100 - value)
+
+    this.updateWinChance()
+
     this.setRollOverText(value.toFixed(0))
+    this.setPayoutText(payout.toFixed(2))
     this.setChanceText(winChance.toFixed(0))
 
     this.resize(this.app.currWidth, this.app.currHeight)
