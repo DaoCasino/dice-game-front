@@ -301,15 +301,8 @@ export default class MainScreen extends BaseScreen {
 
         if (this.gameModel.get('autospin') > 0 || this.gameModel.get('autospin') === -1) {
           let autoSpinBalance = this.gameModel.get('autospinBalance')
-
-          if (profit > 0) {
-            this.gameModel.set('autospinBalance', parseFloat(parseFloat(autoSpinBalance + profit - this.gameModel.get('bet')).toFixed(4)))
-
-          } else {
-            this.gameModel.set('autospinBalance', parseFloat(parseFloat(autoSpinBalance - this.gameModel.get('bet')).toFixed(4)))
-          }
-
-          autoSpinBalance = this.gameModel.get('autospinBalance')
+          autoSpinBalance += profit
+          this.gameModel.set('autospinBalance', autoSpinBalance)
 
           console.log('BalanceDiff: ' + autoSpinBalance)
 
