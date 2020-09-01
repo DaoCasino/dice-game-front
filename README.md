@@ -40,7 +40,7 @@ Vscode extensions:
 - [eslint](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint)
 
 ## Platform integration / Getting Started
-To make the game easier to integrate, separate the business logic of your application from the view. In Dice, I have outlined the main game API class with one `roll` method (see the file [DiceMock.js](./src/DiceMock.js)
+To make the game easier to integrate, separate the business logic of your application from the view. In Dice, I have outlined the main game API class with one `roll` method (see the file [DiceMock.js](./src/DiceMock.js))
 ```JS
 roll (bet, number) {
    return {randomNumber: 50, profit: 0.98, isWin: false}
