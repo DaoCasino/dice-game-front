@@ -225,6 +225,9 @@ class App {
     this.app.ticker.add(this.update, this)
   }
 
+  /**
+   * Connecting to the platform
+   */
   async connect() {
     if (this.isMock) {
       this.gameAPI = new DiceMock()
@@ -232,11 +235,14 @@ class App {
     } else {
       try {
         this.gameAPI = new Dice()
+
+        // we get the necessary parameters for initializing the game
         const { connected, balance, params } = await this.gameAPI.init()
 
         this.gameModel.set('balance', balance)
         this.gameModel.set('deposit', balance)
 
+        // we parse the parameters that came from the contract
         params.forEach(({ type, value }) => {
           switch (type) {
             case 0:
@@ -262,6 +268,9 @@ class App {
     }
   }
 
+  /**
+   * Playing the game
+   */
   play() {
     const userBet = this.gameModel.get('bet')
     const chance = this.gameModel.get('chance')
