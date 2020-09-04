@@ -8,7 +8,7 @@
   - [CLI](#cli)
   - [Code formatting](#code-formatting)
   - [Platform integration / Getting Started](#platform-integration--getting-started)
-    - [A little about the updateTypes parameter](#a-little-about-the-updatetypes-parameter)
+    - [A little about the actionType and updateType parameter](#a-little-about-the-actiontype-and-updatetype-parameter)
 
 ## Environment requirements
 
@@ -73,8 +73,8 @@ public async newGame <T> (
 ```
 We are interested in the first three parameters.
 * `deposit` is a bet string like "1.0000 BET"
-* `actionType` - the number of the action from the contract that starts the game, usually 0, but it all depends on the fantasy of the developer of the game contract.
-* `params` - parameters that are passed to the called action. The order and values ​​of these parameters depend on the developer of the game contract.
+* `actionType` - the number of the action from the contract that starts the game, usually 0, but it all depends on the fantasy of the developer of the game contract. More on this parameter below.
+* `params` - parameters that are passed to the called action. The order and values ​​of these parameters depend on the developer of the game contract. Specifically for Dice see [dice.cpp](https://github.com/DaoCasino/dice-game/blob/master/contracts/src/dice.cpp#L28)
 
 The `newGame` method creates a new game session each time. You need to understand this, so if in the future you need to perform several actions within one game session, use the `gameAction` method.
 ```JS
@@ -82,8 +82,10 @@ const onStartButtonHandle = (...) => window.service.newGame (...)
 const onPlayNextButtonHandle = (...) => window.service.gameAction (...)
 ```
 
-### A little about the updateTypes parameter
-The contract as a result of the execution of `action` can return different `updates`, what they will be when they return, it all depends on the developer of the game contract. Ask him to write down which action numbers to call and which update to expect from the contract. In the simplest case, when the game consists of one action, the contract ends the session and you will receive `GameFinished` = 4. In the SDK code this is the default value, so the `updateTypes` parameter can be omitted in the call to `newGame` and `gameAction`
+### A little about the actionType and updateType parameter
+The contract as a result of the execution of `action` can return different `updates`, what they will be when they return, it all depends on the developer of the game contract (see [Game life-cycle](https://github.com/daocasino/game-contract-sdk#game-life-cycle) description). Ask him to write down which `action` numbers to call and which `update` to expect from the contract. A complete list of `updateTypes` can be found [here](https://github.com/DaoCasino/platform-back/blob/master/models/game_session_update.go#L34-L41).
+
+In the simplest case, when the game consists of one action, the contract ends the session and you will receive `GameFinishedUpdate` = 4. In the SDK code this is the default value, so the `updateTypes` parameter can be omitted in the call to `newGame` and `gameAction`
 
 There are many more interesting methods in `GameService`, to put everything in your head, see the example of implementing game logic in the [Dice.js](./src/Dice.js) file.
 
