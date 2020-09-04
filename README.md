@@ -40,13 +40,12 @@ Vscode extensions:
 - [eslint](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint)
 
 ## Platform integration / Getting Started
-To make the game easier to integrate, separate the business logic of your application from the view. In Dice, I have outlined the main game API class with one `roll` method (see the file [DiceMock.js](./src/DiceMock.js))
+To make the game easier to integrate, separate the business logic of your application from the interface. In Dice, I have outlined the main game API class with one `roll` method (see the file [DiceMock.js](./src/DiceMock.js))
 ```JS
 roll (bet, number) {
    return {randomNumber: 50, profit: 0.98, isWin: false}
 }
 ```
-After the visual part of the game is written and debugged, you can start integrating.
 The first step is to add the SDK to the project.
 ```
 yarn add @daocasino/platform-back-js-lib
@@ -55,13 +54,13 @@ yarn add @daocasino/platform-back-js-lib
 import { getRemoteGameSerivce } from '@daocasino/platform-back-js-lib'
 ```
 
-First, you need to initialize the game's communication with the platform's website. This is done using the SDK method `getRemoteGameSerivce`, as a result, you will return an instance of the class [`GameService`](https://github.com/DaoCasino/game-js-sdk/blob/develop/src/gameService.ts). **Important:** there must be a single instance of this class, use the singleton pattern or just attach it to window
+First, you need to initialize the game's communication with the platform. This is done using the SDK method `getRemoteGameSerivce`, as a result, you will return an instance of the class [`GameService`](https://github.com/DaoCasino/game-js-sdk/blob/develop/src/gameService.ts). **Important:** there must be a single instance of this class, use the singleton pattern or just attach it to window
 ```JS
 window.service = await getRemoteGameService ();
 ```
 If the method call succeeds, congratulations, you are successfully connected to the platform.
 
-Let's go back to our `roll` method. At the entrance, he receives a bet and the number that the user has chosen, you need to transfer this to the contract. For this, the `GameService` has a `newGame` method
+Let's go back to our `roll` method. At the entrance, he receives a bet amount and the number that the user has chosen, you need to transfer this to the contract. For this, the `GameService` has a `newGame` method
 ```TS
 public async newGame <T> (
        deposit: string,
@@ -73,7 +72,7 @@ public async newGame <T> (
 ```
 We are interested in the first three parameters.
 * `deposit` is a bet string like "1.0000 BET"
-* `actionType` - the number of the action from the contract that starts the game, usually 0, but it all depends on the fantasy of the developer of the game contract.
+* `actionType` - the number of the action from the contract that starts the game, usually 0, but it all depends on the actions in the smart-contract.
 * `params` - parameters that are passed to the called action. The order and values ​​of these parameters depend on the developer of the game contract.
 
 The `newGame` method creates a new game session each time. You need to understand this, so if in the future you need to perform several actions within one game session, use the `gameAction` method.
@@ -85,6 +84,4 @@ const onPlayNextButtonHandle = (...) => window.service.gameAction (...)
 ### A little about the updateTypes parameter
 The contract as a result of the execution of `action` can return different `updates`, what they will be when they return, it all depends on the developer of the game contract. Ask him to write down which action numbers to call and which update to expect from the contract. In the simplest case, when the game consists of one action, the contract ends the session and you will receive `GameFinished` = 4. In the SDK code this is the default value, so the `updateTypes` parameter can be omitted in the call to `newGame` and `gameAction`
 
-There are many more interesting methods in `GameService`, to put everything in your head, see the example of implementing game logic in the [Dice.js](./src/Dice.js) file.
-
-Tip: it is better to write the game logic in TypeSctipt, during development you will make fewer mistakes and get useful IDE tips about the types and methods that are in the SDK
+There are many more interesting methods in `GameService`, see the example of implementing game logic in the [Dice.js](./src/Dice.js) file.
