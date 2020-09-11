@@ -28,7 +28,7 @@ jobs:
         - docker push $IMG_NAME:$IMG_TAG
         - |
           if [[ "$TRAVIS_PULL_REQUEST" == "false" ]]; then #tag latest image for branch
-            if [[ "$TRAVIS_BRANCH" == "develop" || "$TRAVIS_BRANCH" == "master" ]]; then
+            if [[ "$TRAVIS_BRANCH" == "develop" || "$TRAVIS_BRANCH" == "stage" || "$TRAVIS_BRANCH" == "master" ]]; then
               docker tag $IMG_NAME:$IMG_TAG $IMG_NAME:$TRAVIS_BRANCH
               docker push $IMG_NAME:$TRAVIS_BRANCH
             fi
@@ -40,6 +40,9 @@ jobs:
         |
         if [[ "$TRAVIS_PULL_REQUEST" == "false" && "$TRAVIS_BRANCH" == "develop" ]]; then
           docker run -e AWS_DEFAULT_REGION -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY silintl/ecs-deploy -t 300 -c platform-dev -n dice-game-dev -i $IMG_NAME:$IMG_TAG --skip-deployments-check
+        elif
+          [[ "$TRAVIS_PULL_REQUEST" == "false" && "$TRAVIS_BRANCH" == "stage" ]]; then
+          docker run -e AWS_DEFAULT_REGION -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY silintl/ecs-deploy -t 300 -c platform-stage -n dice-game-stage -i $IMG_NAME:$IMG_TAG --skip-deployments-check
         elif
           [[ "$TRAVIS_PULL_REQUEST" == "false" && "$TRAVIS_BRANCH" == "master" ]]; then
           docker run -e AWS_DEFAULT_REGION -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY silintl/ecs-deploy -t 300 -c platform-prod -n dice-game-prod -i $IMG_NAME:$IMG_TAG --skip-deployments-check
