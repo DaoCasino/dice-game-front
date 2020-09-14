@@ -2,6 +2,8 @@
 .gitignore
 Dockerfile
 
+/res_unoptimized
+
 # dependencies
 /node_modules
 
