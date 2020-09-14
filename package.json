@@ -13,6 +13,7 @@
     "start:mock": "GAME_IS_MOCK=true npm run start",
     "dev:server": "webpack-dev-server --hot --inline --host 0.0.0.0",
     "watch": "BUILD_MODE='development' webpack -w -d",
+    "build_res": "build_res ./res_unoptimized ./res",
     "build": "webpack -p",
     "predeploy": "npm run build",
     "check_build": "npx serve ./dist",
