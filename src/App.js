@@ -58,13 +58,16 @@ class App {
     console.log(process.env)
     console.log(
       '%c init started',
-      'padding: 7px; background: #005918; color: #ffffff; font: 1.3rem/1 Arial;',
+      'padding: 7px; background: #005918; color: #ffffff; font: 1.3rem/1 Arial;'
     )
 
     this.isMock =
       'GAME_IS_MOCK' in process.env
         ? process.env.GAME_IS_MOCK === 'true'
         : false
+
+    const urlParams = new URLSearchParams(window.location.search)
+    this.isMock = urlParams.has('demo') ? true: this.isMock
 
     this.eventBus = window.eventBus
     this.eventBus.emit(AppEvent.Initialize)
@@ -75,7 +78,7 @@ class App {
       'autospin',
       this.gameModel.get('autospinVariations')[
         this.gameModel.get('autospinVariationIndex')
-        ],
+      ]
     )
 
     await this.connect()
@@ -91,7 +94,7 @@ class App {
 
   releaseLoader() {
     document.body.removeChild(
-      document.body.getElementsByClassName('loading')[0],
+      document.body.getElementsByClassName('loading')[0]
     )
   }
 
@@ -99,13 +102,13 @@ class App {
     return new Promise(resolve => {
       console.log(
         '%c loading resources',
-        'padding: 7px; background: #ab5e00; color: #ffffff; font: 1.3rem/1 Arial;',
+        'padding: 7px; background: #ab5e00; color: #ffffff; font: 1.3rem/1 Arial;'
       )
       Resources.urlMap = this.config.resources.images
       Resources.loadAll().then(() => {
         console.log(
           '%c resources loaded',
-          'padding: 7px; background: #005918; color: #ffffff; font: 1.3rem/1 Arial;',
+          'padding: 7px; background: #005918; color: #ffffff; font: 1.3rem/1 Arial;'
         )
         resolve()
       })
@@ -116,7 +119,7 @@ class App {
     return new Promise(resolve => {
       console.log(
         '%c loading fonts',
-        'padding: 7px; background: #ab5e00; color: #ffffff; font: 1.3rem/1 Arial;',
+        'padding: 7px; background: #ab5e00; color: #ffffff; font: 1.3rem/1 Arial;'
       )
       WebFont.load({
         custom: {
@@ -125,7 +128,7 @@ class App {
         active: () => {
           console.log(
             '%c fonts loaded',
-            'padding: 7px; background: #005918; color: #ffffff; font: 1.3rem/1 Arial;',
+            'padding: 7px; background: #005918; color: #ffffff; font: 1.3rem/1 Arial;'
           )
           resolve()
         },
@@ -136,7 +139,7 @@ class App {
   async initInterface() {
     console.log(
       '%c init interface start',
-      'padding: 7px; background: #ab5e00; color: #ffffff; font: 1.3rem/1 Arial;',
+      'padding: 7px; background: #ab5e00; color: #ffffff; font: 1.3rem/1 Arial;'
     )
     this.initCanvas()
     this.initPIXI()
@@ -145,7 +148,7 @@ class App {
     this.resize()
     console.log(
       '%c init interface finished',
-      'padding: 7px; background: #005918; color: #ffffff; font: 1.3rem/1 Arial;',
+      'padding: 7px; background: #005918; color: #ffffff; font: 1.3rem/1 Arial;'
     )
   }
 
@@ -209,7 +212,7 @@ class App {
 
         this.gameModel.set(
           'balance',
-          parseFloat((this.gameModel.get('balance') + profit).toFixed(4)),
+          parseFloat((this.gameModel.get('balance') + profit).toFixed(4))
         )
         this.eventBus.emit(AppEvent.SpinEnd, profit, randomNumber, isWin)
       } catch (err) {
@@ -231,6 +234,12 @@ class App {
   async connect() {
     if (this.isMock) {
       this.gameAPI = new DiceMock()
+      const { balance, betMin, betMax, maxPayout } = this.gameAPI.init()
+      this.gameModel.set('balance', balance)
+      this.gameModel.set('deposit', balance)
+      this.gameModel.set('betMin', betMin)
+      this.gameModel.set('betMax', betMax)
+      this.gameModel.set('maxPayout', maxPayout)
       return Promise.resolve()
     } else {
       try {
