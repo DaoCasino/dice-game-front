@@ -20,7 +20,7 @@ function randomizeInteger(min, max) {
     throw new Error('Incorrect arguments.')
   }
 
-  return min + Math.floor((max - min + 1) * Math.random())
+  return min + Math.floor((max - min) * Math.random())
 }
 
 const checkBet = deposit => {
