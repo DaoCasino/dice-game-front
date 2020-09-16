@@ -28,5 +28,8 @@
                 "/320x222_dc_x3.png"
             ]
         }
+    },
+    "supports": {
+        "demoMode": true
     }
 }
