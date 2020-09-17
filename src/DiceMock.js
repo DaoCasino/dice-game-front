@@ -50,6 +50,8 @@ const getWinPayout = (bet, num) => {
   return result < MAX_PAYOUT ? result : MAX_PAYOUT
 }
 
+const delay = (min, max) => new Promise((resolve) => setTimeout(resolve, randomizeInteger(min, max)))
+
 export class DiceMock {
   init() {
     return {
@@ -59,7 +61,7 @@ export class DiceMock {
       maxPayout: MAX_PAYOUT,
     }
   }
-  roll(bet, number) {
+  async roll(bet, number) {
     checkBet(bet)
     checkNumber(number)
 
@@ -67,10 +69,12 @@ export class DiceMock {
     const profit = getWinPayout(bet, number)
     const isWin = randomNumber >= number
 
-    return Promise.resolve({
+    await delay(1200, 2000) // simulate network latency for realism
+
+    return {
       randomNumber,
       profit: isWin ? profit : profit * -1,
       isWin,
-    })
+    }
   }
 }
