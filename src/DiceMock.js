@@ -77,4 +77,8 @@ export class DiceMock {
       isWin,
     }
   }
+
+  getBalance() {
+    return Promise.resolve(BALANCE)
+  }
 }
