@@ -136,7 +136,9 @@ export default class MainScreen extends BaseScreen {
       this.betting = new BettingDesktop(this.gameModel)
     }
 
-    this.betting.on('roll', () => {
+    this.betting.on('roll', async () => {
+      await this.app.updateBalance() // update balance before roll
+
       if (this.gameModel.get('bet') > this.gameModel.get('balance')) {
         alert('Not enough money!')
         return
@@ -159,8 +161,8 @@ export default class MainScreen extends BaseScreen {
 
       this.emit('roll')
     })
-    this.betting.on('betMax', () => {
-      const balance = this.gameModel.get('balance')
+    this.betting.on('betMax', async () => {
+      const balance = await this.app.updateBalance()
 
       if (balance > 0) {
         const betMax = this.gameModel.get('betMax')
@@ -199,7 +201,9 @@ export default class MainScreen extends BaseScreen {
       console.log(count)
       this.gameModel.set('autospin', count)
     })
-    this.betting.on('rollstart', (count) => {
+    this.betting.on('rollstart', async (count) => {
+      await this.app.updateBalance() // update balance before roll
+
       if (this.gameModel.get('bet') > this.gameModel.get('balance')) {
         alert('Not enough money!')
         return
@@ -328,7 +332,7 @@ export default class MainScreen extends BaseScreen {
           }
 
           const bet = this.gameModel.get('bet')
-          const balance = this.gameModel.get('balance') // TODO: need get real current balance
+          const balance = this.gameModel.get('balance')
           const betMax = this.gameModel.get('betMax')
 
           const betOnLoss = this.gameModel.get('betOnLoss')

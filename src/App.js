@@ -52,6 +52,14 @@ class App {
     return 0.01
   }
 
+  // return float balance
+  async updateBalance() {
+    const balance = await this.gameAPI.getBalance()
+    this.gameModel.set('balance', balance)
+    console.log('updateBalance', balance)
+    return balance
+  }
+
   async init(config) {
     this.config = config
     this.resources = this.config.resources
@@ -209,11 +217,8 @@ class App {
         })
 
         this.gameModel.set('spinLog', spinLog)
+        await this.updateBalance()
 
-        this.gameModel.set(
-          'balance',
-          parseFloat((this.gameModel.get('balance') + profit).toFixed(4))
-        )
         this.eventBus.emit(AppEvent.SpinEnd, profit, randomNumber, isWin)
       } catch (err) {
         console.error(err)

@@ -45,6 +45,11 @@ export class Dice {
     return result
   }
 
+  async getBalance() {
+    const balance = await this.service.getBalance()
+    return utils.betToFloat(balance)
+  }
+
   /**
    * @param {number} bet player's bet
    * @param {number} number the number the player has bet on
