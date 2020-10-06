@@ -14,7 +14,7 @@ ENV NODE_OPTIONS="--max-old-space-size=2048"
 
 RUN echo "=> build mock: $mock, backendAddr: $backendAddr" && yarn build
 
-FROM nginx:1.15.8-alpine
+FROM nginx:alpine
 WORKDIR /usr/share/nginx/html
 RUN rm -rf *
 COPY --from=builder /sources/dist .
