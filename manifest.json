@@ -31,5 +31,18 @@
     },
     "supports": {
         "demoMode": true
-    }
+    },
+    "explorerSpec": {
+        "mappings": {},
+        "transformers": [
+            {
+                "eventName": "spin",
+                "eventType": 4,
+                "length": 1,
+                "fields": [
+                    { "name": "theNumber", "length": 1 }
+                ]
+              }
+        ]
+      }
 }
