@@ -484,12 +484,12 @@ if (value.indexOf('.') > -1) {
     this.addChild(this._surrogate_hitbox)
 
     this._surrogate_mask = new PIXI.Graphics()
-    this.addChild(this._surrogate_mask)
+    //this.addChild(this._surrogate_mask)
 
     this._surrogate = new PIXI.Text('', {})
     this.addChild(this._surrogate)
 
-    this._surrogate.mask = this._surrogate_mask
+    //this._surrogate.mask = this._surrogate_mask
 
     this._updateFontMetrics()
     this._updateSurrogate()
@@ -511,7 +511,7 @@ if (value.indexOf('.') > -1) {
 
   _updateSurrogateHitbox(bounds) {
     this._surrogate_hitbox.clear()
-    this._surrogate_hitbox.beginFill(0)
+    this._surrogate_hitbox.beginFill(0xffffff, 0.001)
     this._surrogate_hitbox.drawRect(0, 0, bounds.width, bounds.height)
     this._surrogate_hitbox.endFill()
     this._surrogate_hitbox.interactive = !this._disabled
