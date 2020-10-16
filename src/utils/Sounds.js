@@ -1,4 +1,4 @@
-import {Howl} from 'howler'
+import {Howl, Howler} from 'howler'
 import * as PIXI from 'pixi.js'
 
 export default class Sounds {
