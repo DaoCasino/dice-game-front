@@ -1,5 +1,6 @@
 import * as PIXI from 'pixi.js'
 import WebFont from 'webfontloader'
+import _ from 'underscore'
 
 import { Dice } from './Dice'
 import { DiceMock } from './DiceMock'
@@ -7,6 +8,7 @@ import { DiceMock } from './DiceMock'
 import MainScreen from './screens/MainScreen'
 import DeepModel from './utils/DeepModel'
 import Resources from './utils/Resources'
+import Sounds from './utils/Sounds'
 
 const AppState = {
   Preparing: 'preparing',
@@ -66,7 +68,7 @@ class App {
     console.log(process.env)
     console.log(
       '%c init started',
-      'padding: 7px; background: #005918; color: #ffffff; font: 1.3rem/1 Arial;'
+      'padding: 7px; background: #005918; color: #ffffff; font: 1.3rem/1 Arial;',
     )
 
     this.isMock =
@@ -75,10 +77,13 @@ class App {
         : false
 
     const urlParams = new URLSearchParams(window.location.search)
-    this.isMock = urlParams.has('demo') ? true: this.isMock
+    this.isMock = urlParams.has('demo') ? true : this.isMock
 
     this.eventBus = window.eventBus
     this.eventBus.emit(AppEvent.Initialize)
+
+    this.cookiesName = 'dao-dice'
+    this.soundEnabled = true
 
     this.gameModel = new DeepModel(this.config)
     this.gameModel.set('connected', false)
@@ -86,23 +91,28 @@ class App {
       'autospin',
       this.gameModel.get('autospinVariations')[
         this.gameModel.get('autospinVariationIndex')
-      ]
+        ],
     )
 
     await this.connect()
 
     await this.loadFont()
     await this.loadResources()
+    await this.initSounds()
+
+    this.loadCookies()
+    this.setSoundEnabled(this.soundEnabled)
 
     this.releaseLoader()
     this.initInterface()
+
 
     this.gameModel.set('connected', true)
   }
 
   releaseLoader() {
     document.body.removeChild(
-      document.body.getElementsByClassName('loading')[0]
+      document.body.getElementsByClassName('loading')[0],
     )
   }
 
@@ -110,13 +120,13 @@ class App {
     return new Promise(resolve => {
       console.log(
         '%c loading resources',
-        'padding: 7px; background: #ab5e00; color: #ffffff; font: 1.3rem/1 Arial;'
+        'padding: 7px; background: #ab5e00; color: #ffffff; font: 1.3rem/1 Arial;',
       )
       Resources.urlMap = this.config.resources.images
       Resources.loadAll().then(() => {
         console.log(
           '%c resources loaded',
-          'padding: 7px; background: #005918; color: #ffffff; font: 1.3rem/1 Arial;'
+          'padding: 7px; background: #005918; color: #ffffff; font: 1.3rem/1 Arial;',
         )
         resolve()
       })
@@ -127,7 +137,7 @@ class App {
     return new Promise(resolve => {
       console.log(
         '%c loading fonts',
-        'padding: 7px; background: #ab5e00; color: #ffffff; font: 1.3rem/1 Arial;'
+        'padding: 7px; background: #ab5e00; color: #ffffff; font: 1.3rem/1 Arial;',
       )
       WebFont.load({
         custom: {
@@ -136,7 +146,7 @@ class App {
         active: () => {
           console.log(
             '%c fonts loaded',
-            'padding: 7px; background: #005918; color: #ffffff; font: 1.3rem/1 Arial;'
+            'padding: 7px; background: #005918; color: #ffffff; font: 1.3rem/1 Arial;',
           )
           resolve()
         },
@@ -147,7 +157,7 @@ class App {
   async initInterface() {
     console.log(
       '%c init interface start',
-      'padding: 7px; background: #ab5e00; color: #ffffff; font: 1.3rem/1 Arial;'
+      'padding: 7px; background: #ab5e00; color: #ffffff; font: 1.3rem/1 Arial;',
     )
     this.initCanvas()
     this.initPIXI()
@@ -156,7 +166,7 @@ class App {
     this.resize()
     console.log(
       '%c init interface finished',
-      'padding: 7px; background: #005918; color: #ffffff; font: 1.3rem/1 Arial;'
+      'padding: 7px; background: #005918; color: #ffffff; font: 1.3rem/1 Arial;',
     )
   }
 
@@ -228,6 +238,46 @@ class App {
     })
   }
 
+  initSounds() {
+    return new Promise(resolve => {
+      Sounds.init(this.config.resources.sounds)
+
+      if (!this.soundEnabled) {
+        Sounds.mute()
+      }
+
+      resolve()
+    })
+  }
+
+  setSoundEnabled(value) {
+    this.soundEnabled = value
+    this.saveCookies()
+
+    if (value) {
+      Sounds.unmute()
+
+    } else {
+      Sounds.mute()
+    }
+  }
+
+  saveCookies() {
+    localStorage.setItem(this.cookiesName, JSON.stringify({
+      soundEnabled: this.soundEnabled,
+    }))
+  }
+
+  loadCookies() {
+    const data = JSON.parse(localStorage.getItem(this.cookiesName))
+
+    console.log('loadCookies', data)
+
+    if (data) {
+      this.soundEnabled = data.soundEnabled
+    }
+  }
+
   initTicker() {
     this.app.start()
     this.app.ticker.add(this.update, this)
@@ -288,6 +338,8 @@ class App {
   play() {
     const userBet = this.gameModel.get('bet')
     const chance = this.gameModel.get('chance')
+
+    Sounds.play('roll_' + _.sample([1, 2, 3]) + '_mp3')
 
     return this.gameAPI.roll(userBet, 100 - chance)
   }

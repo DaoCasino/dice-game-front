@@ -28,6 +28,7 @@
     "@pixi/filter-drop-shadow": "*",
     "backbone": "^1.4.0",
     "gsap": "^2.1.2",
+    "howler": "^2.2.0",
     "jquery": "^3.4.1",
     "mobile-device-detect": "0.2.3",
     "pixi.js": "5.1.4",
