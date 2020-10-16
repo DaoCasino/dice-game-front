@@ -298,7 +298,9 @@ export default class MainScreen extends BaseScreen {
       this.gameModel.set('lastProfit', profit)
       this.gameModel.set('lastIsWin', isWin)
 
-      Sounds.play(profit > 0 ? 'win_mp3' : 'lose_mp3')
+      if (profit > 0) {
+        Sounds.play('win_mp3')
+      }
 
       this.resize(this.app.currWidth, this.app.currHeight)
 
