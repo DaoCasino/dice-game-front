@@ -78,6 +78,11 @@ export class DiceMock {
     }
   }
 
+  emit(event, params) {
+    console.log('to frontend event', { event, params })
+    return Promise.resolve()
+  }
+
   getBalance() {
     return Promise.resolve(BALANCE)
   }

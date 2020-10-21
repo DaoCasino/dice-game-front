@@ -54,11 +54,23 @@ class App {
     return 0.01
   }
 
+  async checkInsufficientBalance() {
+    const betMin = this.gameModel.get('betMin')
+    const balance = this.gameModel.get('balance')
+
+    console.log('checkInsufficientBalance', { betMin, balance })
+    if (balance < betMin) {
+      await this.gameAPI.emit('insufficient-balance')
+    }
+  }
+
   // return float balance
   async updateBalance() {
     const balance = await this.gameAPI.getBalance()
     this.gameModel.set('balance', balance)
     console.log('updateBalance', balance)
+
+    await this.checkInsufficientBalance()
     return balance
   }
 
