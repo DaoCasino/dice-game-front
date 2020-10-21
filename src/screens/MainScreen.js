@@ -8,13 +8,14 @@ import Slider from '../widgets/Slider'
 import Label from '../widgets/Label'
 import Utils from '../utils/Utils'
 import Betting from './components/Betting'
-import { App, AppEvent } from '../App'
+import { AppEvent } from '../App'
 import Resources from '../utils/Resources'
 import Button from '../widgets/Button'
 import AutoBettingDesktop from './components/AutoBettingDesktop'
 import BettingDesktop from './components/BettingDesktop'
 import ProofDesktop from './components/ProofDesktop'
 import Proof from './components/Proof'
+import Sounds from '../utils/Sounds'
 
 export default class MainScreen extends BaseScreen {
   constructor(gameModel, app) {
@@ -297,6 +298,10 @@ export default class MainScreen extends BaseScreen {
       this.gameModel.set('lastProfit', profit)
       this.gameModel.set('lastIsWin', isWin)
 
+      if (profit > 0) {
+        Sounds.play('win_mp3')
+      }
+
       this.resize(this.app.currWidth, this.app.currHeight)
 
       if (this.gameModel.get('autospinEnabled')) {
@@ -413,6 +418,18 @@ export default class MainScreen extends BaseScreen {
       alpha: 0,
     })
 
+    this.soundButton = new PIXI.Sprite(PIXI.Texture.from(Resources.get(app.soundEnabled ? 'sound_on_button_png' : 'sound_off_button_png')))
+    this.soundButton.buttonMode = true
+    this.soundButton.interactive = true
+    this.soundButton.anchor.set(0.5)
+    this.soundButton.scale.set(0.65)
+
+    this.soundButton.on('pointerdown', () => {
+      app.setSoundEnabled(!app.soundEnabled)
+
+      this.soundButton.texture = PIXI.Texture.from(Resources.get(app.soundEnabled ? 'sound_on_button_png' : 'sound_off_button_png'))
+    })
+
     this.addChild(this.background)
     this.addChild(this.sliderValueLine)
     this.addChild(this.slider)
@@ -421,6 +438,7 @@ export default class MainScreen extends BaseScreen {
     this.addChild(this.labelValueContainer)
     this.addChild(this.betting)
     this.addChild(this.rightPanel)
+    this.addChild(this.soundButton)
     this.addChild(this.proof)
 
     this.labelContainer.addChild(this.rolloverLabel)
@@ -507,6 +525,11 @@ export default class MainScreen extends BaseScreen {
       this.betting.y = Utils.percent(height, bettingPercentY)
       this.betting.resize(isMobile ? width : width * 0.65, Utils.percent(height, bettingHeightPercent))
 
+      const soundMargin = 10
+
+      this.soundButton.x = this.soundButton.width / 2 + soundMargin
+      this.soundButton.y = height - this.soundButton.height / 2 - soundMargin
+
     } else {
       this.slider.set({
         y: Utils.percent(height, 17),
@@ -547,9 +570,14 @@ export default class MainScreen extends BaseScreen {
       this.betting.x = (fullWidth - width) / 2
       this.betting.y = Utils.percent(height, bettingPercentY)
       this.betting.resize(isMobile ? width : width * 0.65, Utils.percent(height, bettingHeightPercent))
+
+      const soundMargin = 10
+
+      this.soundButton.x = this.betting.x + this.soundButton.width / 2 + soundMargin
+      this.soundButton.y = this.soundButton.height / 2 + soundMargin
     }
 
-    const fill = isWin ? '0x61ffb1' :'0xff6f61'
+    const fill = isWin ? '0x61ffb1' : '0xff6f61'
 
     this.sliderValueLine.set({
       x: this.slider.get('x') + Utils.remap(rollover, 0, 100, 0, this.slider.get('width')),

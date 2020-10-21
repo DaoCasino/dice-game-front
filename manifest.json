@@ -4,7 +4,7 @@
         "small": "/163x238_dc.png",
         "big": "/320x222_dc.png"
     },
-    "description": "lorem ipsum",
+    "description": "Play Dice online at the safest no deposit blockchain casino %s. All games are on-chain and secured by fair and tamper-proof algorithm signidice.",
     "text": "lorem ipsum",
     "gameSpecURL": "http://",
     "optimizedIcons": {
@@ -31,5 +31,18 @@
     },
     "supports": {
         "demoMode": true
-    }
+    },
+    "explorerSpec": {
+        "mappings": {},
+        "transformers": [
+            {
+                "eventName": "spin",
+                "eventType": 4,
+                "length": 1,
+                "fields": [
+                    { "name": "theNumber", "length": 1 }
+                ]
+              }
+        ]
+      }
 }
