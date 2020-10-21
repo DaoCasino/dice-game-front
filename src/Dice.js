@@ -45,6 +45,10 @@ export class Dice {
     return result
   }
 
+  emit(event, params) {
+    return this.service.emit(event, params)
+  }
+
   async getBalance() {
     const balance = await this.service.getBalance()
     return utils.betToFloat(balance)
