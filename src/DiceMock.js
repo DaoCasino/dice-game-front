@@ -1,7 +1,7 @@
 // Game params
 const MIN_BET = 1
-const MAX_BET = 10
-const MAX_PAYOUT = 20
+const MAX_BET = 10000
+const MAX_PAYOUT = 990000
 const BALANCE = 100000000
 
 const ALL_RANGE = 100.0 // total range of possible dice numbers
