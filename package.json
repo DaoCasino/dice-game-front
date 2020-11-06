@@ -11,10 +11,10 @@
   "scripts": {
     "start": "npm-run-all --parallel dev:server lint:watch",
     "start:mock": "GAME_IS_MOCK=true npm run start",
-    "dev:server": "webpack-dev-server --hot --inline --host 0.0.0.0",
+    "dev:server": "webpack-dev-server --hot --inline --host 0.0.0.0 --config webpack.dev.js",
     "watch": "BUILD_MODE='development' webpack -w -d",
     "build_res": "build_res ./res_unoptimized ./res",
-    "build": "webpack -p",
+    "build": "webpack -p --config webpack.prod.js",
     "predeploy": "npm run build",
     "check_build": "npx serve ./dist",
     "lint": "node_modules/.bin/esw webpack.config.* ./src --color",
@@ -65,6 +65,7 @@
     "webpack-cli": "^3.3.2",
     "webpack-dev-server": "^3.1.14",
     "webpack-extraneous-file-cleanup-plugin": "^2.0.0",
+    "webpack-merge": "^5.3.0",
     "webpack-provide-global-plugin": "^0.0.1"
   },
   "resolutions": {
