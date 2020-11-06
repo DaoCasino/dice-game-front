@@ -1,4 +1,5 @@
 import * as PIXI from 'pixi.js'
+import { Linear, Sine, TweenMax } from 'gsap'
 
 import Widget from '../../widgets/Widget'
 import Button from '../../widgets/Button'
@@ -214,7 +215,7 @@ export default class ManualBetting extends Widget {
     this.payoutValueSprite.scale.set(1)
 
     this.gameModel.on('change:betMin', () => {
-        this.betValueLabel.min = this.gameModel.get('betMin')
+      this.betValueLabel.min = this.gameModel.get('betMin')
     })
 
     this.gameModel.on('change:betMax', () => {
@@ -262,6 +263,18 @@ export default class ManualBetting extends Widget {
         },
       })
       this.rollButtonSprite.visible = true
+
+      TweenMax.killTweensOf(this.rollButtonSprite)
+      TweenMax.killTweensOf(this.rollButtonSprite.scale)
+
+      TweenMax.to(this.rollButtonSprite, 15, { repeat: -1, rotation: 360, ease: Sine.easeOut })
+      TweenMax.to(this.rollButtonSprite.scale, 0.3, {
+        repeat: -1,
+        x: 1.3,
+        y: 1.3,
+        yoyo: true,
+        ease: Linear.easeNone,
+      })
     })
 
     const spinEnd = () => {
@@ -271,7 +284,13 @@ export default class ManualBetting extends Widget {
           visible: true,
         },
       })
+
       this.rollButtonSprite.visible = false
+      this.rollButtonSprite.rotation = 0
+      this.rollButtonSprite.scale.set(1, 1)
+
+      TweenMax.killTweensOf(this.rollButtonSprite)
+      TweenMax.killTweensOf(this.rollButtonSprite.scale)
     }
 
     this.eventBus.on(AppEvent.SpinEnd, spinEnd)
@@ -315,12 +334,11 @@ export default class ManualBetting extends Widget {
     if (bet > balance || balance === 0) {
       this.rollButton.set('disable', true)
       this.maxBetButton.set('disable', true)
-    }
-    else {
+    } else {
       this.rollButton.set('disable', false)
       this.maxBetButton.set('disable', false)
     }
-    
+
   }
 
   update(dt) {
