@@ -32,21 +32,25 @@ function getPlugins() {
     new HtmlWebpackPlugin({
       template: './static/index.html',
       filename: 'index.html',
-      publicPath: '/',
+      publicPath: './',
       inject: true,
       WEBSOCKET: process.env.WEBSOCKET,
       inlineSource: '.(js|css)$',
     }),
     new CleanWebpackPlugin(['dist']),
     new ScriptExtHtmlWebpackPlugin(),
-    new CopyWebpackPlugin([{
-      from: './res',
-      to: './res',
-    }]),
-    new CopyWebpackPlugin([{
-      from: './static/images',
-      to: './',
-    }]),
+    new CopyWebpackPlugin([
+      {
+        from: './res',
+        to: './res',
+      },
+    ]),
+    new CopyWebpackPlugin([
+      {
+        from: './static/images',
+        to: './',
+      },
+    ]),
   ]
 
   return plugins
@@ -60,32 +64,10 @@ module.exports = {
     path: path.resolve(__dirname, 'dist'),
     filename: 'bundle.[hash].js',
   },
-  optimization: {
-    minimize: false,
-    /*
-    minimizer: [
-      new UglifyJsPlugin({
-        cache: false,
-        parallel: true,
-        sourceMap: true,
-        uglifyOptions: {
-          warnings: false,
-          keep_fnames: true,
-          keep_classnames: true,
-        },
-      }),
-    ],
-     */
-  },
   plugins: getPlugins(),
   resolve: {
     symlinks: false,
-    extensions: [
-      '.wasm', '.ts', '.tsx', '.js', '.json', '.png',
-    ],
-  },
-  devServer: {
-    disableHostCheck: true,
+    extensions: ['.wasm', '.ts', '.tsx', '.js', '.json', '.png'],
   },
   node: {
     fs: 'empty',
@@ -94,17 +76,22 @@ module.exports = {
     tls: 'empty',
   },
   module: {
-    rules: [{
-      loader: require.resolve('file-loader'),
-      exclude: [/\.(wasm|js|mjs|jsx|ts|tsx)$/, /\.html$/, /\.json$/],
-    }, {
-      test: /\.js$/,
-      loader: 'babel-loader?presets[]=es2015&plugins[]=transform-class-properties',
-      exclude: /(node_modules|bower_components)/,
-    }, {
-      test: /\.hbs/,
-      loader: 'handlebars-loader',
-      exclude: /(node_modules|bower_components)/,
-    }],
+    rules: [
+      {
+        loader: require.resolve('file-loader'),
+        exclude: [/\.(wasm|js|mjs|jsx|ts|tsx)$/, /\.html$/, /\.json$/],
+      },
+      {
+        test: /\.js$/,
+        loader:
+          'babel-loader?presets[]=es2015&plugins[]=transform-class-properties',
+        exclude: /(node_modules|bower_components)/,
+      },
+      {
+        test: /\.hbs/,
+        loader: 'handlebars-loader',
+        exclude: /(node_modules|bower_components)/,
+      },
+    ],
   },
 }
