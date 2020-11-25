@@ -31,6 +31,8 @@ const AppEvent = {
 }
 
 class App {
+  static instance = null;
+
   getPayoutOnWin(bet, number) {
     return bet * this.getPayout(number)
   }
@@ -53,6 +55,10 @@ class App {
 
   getHouseEdge() {
     return 0.01
+  }
+
+  constructor() {
+    App.instance = this
   }
 
   async checkInsufficientBalance() {
