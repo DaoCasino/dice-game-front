@@ -104,7 +104,7 @@ export default class ManualBetting extends Widget {
       alpha: 0.4,
     })
 
-    this.betValueSprite = new PIXI.Sprite(PIXI.Texture.from(Resources.get('eos_png')))
+    this.betValueSprite = new PIXI.Sprite(app.currencyManager.getTexture('bet'))
     this.betValueSprite.anchor.set(0.5)
     this.betValueSprite.scale.set(1)
 
@@ -213,7 +213,7 @@ export default class ManualBetting extends Widget {
       alpha: 0.4,
     })
 
-    this.payoutValueSprite = new PIXI.Sprite(PIXI.Texture.from(Resources.get('eos_png')))
+    this.payoutValueSprite = new PIXI.Sprite(app.currencyManager.getTexture('bet'))
     this.payoutValueSprite.anchor.set(0.5)
     this.payoutValueSprite.scale.set(1)
 

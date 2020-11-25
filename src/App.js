@@ -9,6 +9,7 @@ import MainScreen from './screens/MainScreen'
 import DeepModel from './utils/DeepModel'
 import Resources from './utils/Resources'
 import Sounds from './utils/Sounds'
+import { CurrencyManager } from './utils/CurrencyManager'
 
 const AppState = {
   Preparing: 'preparing',
@@ -110,6 +111,7 @@ class App {
 
     await this.loadFont()
     await this.loadResources()
+    await this.initCurrency()
     await this.initSounds()
 
     this.loadCookies()
@@ -164,6 +166,19 @@ class App {
         },
       })
     })
+  }
+
+  async initCurrency() {
+    this.currencyManager = new CurrencyManager()
+
+    await this.currencyManager.setData([{
+      type: 'BET',
+      sources: [
+        { key: 'bet', src: PIXI.Texture.from(Resources.get('eos_png')) },
+      ],
+    }])
+
+    this.currencyManager.setCurrency('BET')
   }
 
   async initInterface() {
