@@ -237,9 +237,8 @@ export default class AutoBetting extends Widget {
       alpha: 0.4,
     })
 
-    this.betValueSprite = new PIXI.Sprite(App.instance.currencyManager.getTexture('bet'))
+    this.betValueSprite = App.instance.currencyManager.createSprite('bet')
     this.betValueSprite.anchor.set(0.5)
-    this.betValueSprite.scale.set(1)
 
     this.betValueLabel = new InputLabel({
       disable: true,
@@ -540,9 +539,8 @@ export default class AutoBetting extends Widget {
       strokeThickness: 1,
     })
 
-    this.stopOnWinValueSprite = new PIXI.Sprite(App.instance.currencyManager.getTexture('bet'))
+    this.stopOnWinValueSprite = App.instance.currencyManager.createSprite('bet')
     this.stopOnWinValueSprite.anchor.set(0.5)
-    this.stopOnWinValueSprite.scale.set(1)
 
     this.stopOnWinValueLabel = new InputLabel({
       disable: true,
@@ -712,9 +710,8 @@ export default class AutoBetting extends Widget {
       strokeThickness: 1,
     })
 
-    this.stopOnLossValueSprite = new PIXI.Sprite(App.instance.currencyManager.getTexture('bet'))
+    this.stopOnLossValueSprite = App.instance.currencyManager.createSprite('bet')
     this.stopOnLossValueSprite.anchor.set(0.5)
-    this.stopOnLossValueSprite.scale.set(1)
 
     this.stopOnLossValueLabel = new InputLabel({
       disable: true,

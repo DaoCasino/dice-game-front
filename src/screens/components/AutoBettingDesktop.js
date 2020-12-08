@@ -10,7 +10,6 @@ import Rectangle from '../../widgets/Rectangle'
 import List from '../../widgets/List'
 import InputLabel from '../../widgets/InputLabel'
 import Circle from '../../widgets/Circle'
-import Resources from '../../utils/Resources'
 import { App } from '../../App'
 
 class ChangeBetPanel extends Widget {
@@ -457,9 +456,8 @@ export default class AutoBettingDesktop extends Widget {
       strokeThickness: 1,
     })
 
-    this.stopOnWinValueSprite = new PIXI.Sprite(App.instance.currencyManager.getTexture('bet'))
+    this.stopOnWinValueSprite = App.instance.currencyManager.createSprite('bet')
     this.stopOnWinValueSprite.anchor.set(0.5)
-    this.stopOnWinValueSprite.scale.set(1)
 
     this.stopOnWinValueLabel = new InputLabel({
       disable: true,
@@ -620,9 +618,8 @@ export default class AutoBettingDesktop extends Widget {
       alpha: 0.4,
     })
 
-    this.stopOnLossValueSprite = new PIXI.Sprite(App.instance.currencyManager.getTexture('bet'))
+    this.stopOnLossValueSprite = App.instance.currencyManager.createSprite('bet')
     this.stopOnLossValueSprite.anchor.set(0.5)
-    this.stopOnLossValueSprite.scale.set(1)
 
     this.stopOnLossValueBackground = new Rectangle({
       fill: '0x313354',

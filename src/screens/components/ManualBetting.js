@@ -92,9 +92,8 @@ export default class ManualBetting extends Widget {
       alpha: 0.4,
     })
 
-    this.betValueSprite = new PIXI.Sprite(App.instance.currencyManager.getTexture('bet'))
+    this.betValueSprite = App.instance.currencyManager.createSprite('bet')
     this.betValueSprite.anchor.set(0.5)
-    this.betValueSprite.scale.set(1)
 
     this.betValueLabel = new InputLabel({
       //disable: true,
@@ -210,9 +209,8 @@ export default class ManualBetting extends Widget {
       },
     })
 
-    this.payoutValueSprite = new PIXI.Sprite(App.instance.currencyManager.getTexture('bet'))
+    this.payoutValueSprite = App.instance.currencyManager.createSprite('bet')
     this.payoutValueSprite.anchor.set(0.5)
-    this.payoutValueSprite.scale.set(1)
 
     this.gameModel.on('change:betMin', () => {
       this.betValueLabel.min = this.gameModel.get('betMin')

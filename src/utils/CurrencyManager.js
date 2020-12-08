@@ -11,6 +11,7 @@ export class CurrencyManager extends EventEmitter {
     super()
     this._currency = null
     this._textures = new Map()
+    this._options = new Map()
   }
 
   setTextureFromUrl(type, key, src) {
@@ -20,6 +21,7 @@ export class CurrencyManager extends EventEmitter {
       image.src = src
       image.onload = () => {
         const textures = this.getCurrencyTextures(type)
+
         if (textures) {
           textures[key] = new PIXI.Texture(new PIXI.BaseTexture(image))
         }
@@ -27,6 +29,22 @@ export class CurrencyManager extends EventEmitter {
       }
       image.onerror = () => reject()
     })
+  }
+
+  createSprite(key, currency = null) {
+    currency = currency ? currency : this._currency
+
+    const texture = this.getTexture(key, currency)
+    const sprite = new PIXI.Sprite(texture)
+    const options = this.getOptions(currency)
+
+    console.log(options)
+
+    if (options) {
+      sprite.scale.set(1 / options.scale)
+    }
+
+    return sprite
   }
 
   setTextureFromBaseTexture(type, key, src) {
@@ -37,16 +55,30 @@ export class CurrencyManager extends EventEmitter {
     return Promise.resolve()
   }
 
-  async parseData(currency, sources) {
-    if (!this._textures.has(currency)) {
-      this._textures.set(currency, [])
+  async parseData(props) {
+    let { type, precision, scale, sources } = props
+
+    if (!scale) {
+      scale = 1
     }
+
+    if (!precision) {
+      precision = 0
+    }
+
+    if (!this._options.has(type)) {
+      this._options.set(type, { scale, precision })
+    }
+    if (!this._textures.has(type)) {
+      this._textures.set(type, [])
+    }
+
     await Promise.all(sources.map((({ src, key }, index) => {
       switch (typeof src) {
         case 'string':
-          return this.setTextureFromUrl(currency, key, src)
+          return this.setTextureFromUrl(type, key, src)
         case 'object':
-          return this.setTextureFromBaseTexture(currency, key, src)
+          return this.setTextureFromBaseTexture(type, key, src)
         default:
           throw new Error('Wrong source with index=' + index)
       }
@@ -55,7 +87,8 @@ export class CurrencyManager extends EventEmitter {
 
   async setData(props) {
     this.release()
-    await Promise.all(props.map(({ type, sources }) => this.parseData(type, sources)))
+
+    await Promise.all(props.map(props => this.parseData(props)))
   }
 
   release(currency = null) {
@@ -64,6 +97,7 @@ export class CurrencyManager extends EventEmitter {
     })
     this._currency = null
     this._textures.clear()
+    this._options.clear()
   }
 
   getTexture(key, currency = null) {
@@ -82,6 +116,10 @@ export class CurrencyManager extends EventEmitter {
   setCurrency(currency) {
     this._currency = currency
     this.emit(CurrencyEvent.Change, currency)
+  }
+
+  getOptions(currency) {
+    return this._options.get(currency)
   }
 
   getCurrency() {
