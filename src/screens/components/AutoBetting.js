@@ -9,6 +9,7 @@ import List from '../../widgets/List'
 import Widget from '../../widgets/Widget'
 import InputLabel from '../../widgets/InputLabel'
 import Resources from '../../utils/Resources'
+import { App } from '../../App'
 
 class ChangeBetPanel extends Widget {
   constructor() {
@@ -236,7 +237,7 @@ export default class AutoBetting extends Widget {
       alpha: 0.4,
     })
 
-    this.betValueSprite = new PIXI.Sprite(PIXI.Texture.from(Resources.get('eos_png')))
+    this.betValueSprite = new PIXI.Sprite(App.instance.currencyManager.getTexture('bet'))
     this.betValueSprite.anchor.set(0.5)
     this.betValueSprite.scale.set(1)
 
@@ -539,7 +540,7 @@ export default class AutoBetting extends Widget {
       strokeThickness: 1,
     })
 
-    this.stopOnWinValueSprite = new PIXI.Sprite(PIXI.Texture.from(Resources.get('eos_png')))
+    this.stopOnWinValueSprite = new PIXI.Sprite(App.instance.currencyManager.getTexture('bet'))
     this.stopOnWinValueSprite.anchor.set(0.5)
     this.stopOnWinValueSprite.scale.set(1)
 
@@ -711,7 +712,7 @@ export default class AutoBetting extends Widget {
       strokeThickness: 1,
     })
 
-    this.stopOnLossValueSprite = new PIXI.Sprite(PIXI.Texture.from(Resources.get('eos_png')))
+    this.stopOnLossValueSprite = new PIXI.Sprite(App.instance.currencyManager.getTexture('bet'))
     this.stopOnLossValueSprite.anchor.set(0.5)
     this.stopOnLossValueSprite.scale.set(1)
 

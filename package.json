@@ -27,6 +27,7 @@
     "@daocasino/platform-back-js-lib": "1.5.5",
     "@pixi/filter-drop-shadow": "*",
     "backbone": "^1.4.0",
+    "eventemitter3": "^4.0.7",
     "gsap": "^2.1.2",
     "howler": "^2.2.0",
     "jquery": "^3.4.1",
@@ -65,7 +66,7 @@
     "webpack-cli": "^3.3.2",
     "webpack-dev-server": "^3.1.14",
     "webpack-extraneous-file-cleanup-plugin": "^2.0.0",
-    "webpack-merge": "^5.3.0",
+    "webpack-merge": "^5.4.0",
     "webpack-provide-global-plugin": "^0.0.1"
   },
   "resolutions": {
