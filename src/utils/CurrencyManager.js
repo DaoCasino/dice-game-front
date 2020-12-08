@@ -38,8 +38,6 @@ export class CurrencyManager extends EventEmitter {
     const sprite = new PIXI.Sprite(texture)
     const options = this.getOptions(currency)
 
-    console.log(options)
-
     if (options) {
       sprite.scale.set(1 / options.scale)
     }
@@ -88,7 +86,7 @@ export class CurrencyManager extends EventEmitter {
   async setData(props) {
     this.release()
 
-    await Promise.all(props.map(props => this.parseData(props)))
+    await Promise.all(props.map(this.parseData))
   }
 
   release(currency = null) {
