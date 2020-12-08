@@ -197,41 +197,43 @@ class App {
 
   async setupCurrency() {
     const urlParams = new URLSearchParams(window.location.search)
+    const hasAllParams = urlParams.has('cur') && urlParams.has('curIcon') && urlParams.has('curPrecision')
 
-    if (urlParams.has('cur') && urlParams.has('curIcon') && urlParams.has('curPrecision')) {
-      const cur = urlParams.get('cur')
-      const curIcon = urlParams.get('curIcon')
-      const curPrecision = parseFloat(urlParams.get('curPrecision'))
-
-      try {
-        const image = await Utils.svg2img(curIcon, { width: 24, height: 24 })
-
-        await this.currencyManager.setData([{
-          type: cur,
-          precision: curPrecision,
-          sources: [
-            {
-              key: 'bet',
-              src: new PIXI.Texture(new PIXI.BaseTexture(image)),
-            },
-          ],
-        }])
-
-        this.currencyManager.setCurrency(cur)
-
-        return Promise.resolve()
-
-      } catch (error) {
-        console.error('App::setupCurrency() - invalid imageUrl')
-
-        return Promise.reject()
-      }
-
-    } else {
+    if (!hasAllParams) {
       console.error('App::setupCurrency() - invalid urlParams')
 
       return Promise.reject()
     }
+
+    const cur = urlParams.get('cur')
+    const curIcon = urlParams.get('curIcon')
+    const curPrecision = parseFloat(urlParams.get('curPrecision'))
+
+    let image = null
+
+    try {
+      image = await Utils.svg2img(curIcon, { width: 24, height: 24 })
+
+    } catch (error) {
+      console.error('App::setupCurrency() - invalid imageUrl')
+
+      return Promise.reject()
+    }
+
+    await this.currencyManager.setData([{
+      type: cur,
+      precision: curPrecision,
+      sources: [
+        {
+          key: 'bet',
+          src: new PIXI.Texture(new PIXI.BaseTexture(image)),
+        },
+      ],
+    }])
+
+    this.currencyManager.setCurrency(cur)
+
+    return Promise.resolve()
   }
 
   async initCurrency() {
