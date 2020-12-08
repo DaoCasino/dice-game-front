@@ -26,8 +26,22 @@ export default class Utils {
     return parseFloat(bet.replace(/\s+BET$/, ''))
   }
 
-  static toBET(bet) {
-    return bet.toFixed(4) + ' BET'
+  static toBET(num) {
+    // eslint-disable-next-line
+    let [integer, decimals] = num
+      .toString()
+      .match(/^-?\d+(?:\.\d{0,4})?/)[0]
+      .split('.')
+
+    if (decimals) {
+      for (let i = decimals.length; i < 4; i++) {
+        decimals += '0'
+      }
+    } else {
+      decimals = '0000'
+    }
+
+    return `${integer}.${decimals} BET`
   }
 
   static svg2img(url, options) {
