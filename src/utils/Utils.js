@@ -1,91 +1,137 @@
 import _ from 'underscore'
+import SvgToImage from 'svg-to-image'
+
+const svgToImage = (svg, options) =>
+  new Promise((resolve, reject) => {
+    SvgToImage(svg, (err, image) => {
+      if (err) return reject(err)
+
+      if (options) {
+        if ('width' in options) {
+          image.width = options.width
+        }
+        if ('height' in options) {
+          image.height = options.height
+        }
+      }
+
+      resolve(image)
+    })
+  })
 
 export default class Utils {
   static percent(value, percent) {
-    return value * percent / 100
+    return (value * percent) / 100
   }
 
   static rangeToPercent(number, min, max) {
-    return ((number - min) / (max - min))
+    return (number - min) / (max - min)
   }
 
   static percentToRange(percent, min, max) {
-    return ((max - min) * percent + min)
+    return (max - min) * percent + min
   }
 
   static remap(value, low1, high1, low2, high2) {
-    return low2 + (high2 - low2) * (value - low1) / (high1 - low1)
+    return low2 + ((high2 - low2) * (value - low1)) / (high1 - low1)
   }
 
   static rectContainsPoint(rect, point) {
-    return rect.x <= point.x && point.x <= rect.x + rect.width && rect.y <= point.y && point.y <= rect.y + rect.height
+    return (
+      rect.x <= point.x &&
+      point.x <= rect.x + rect.width &&
+      rect.y <= point.y &&
+      point.y <= rect.y + rect.height
+    )
   }
 
   static betToFloat(bet) {
-    return parseFloat(bet.replace(/\s+BET$/,''))
+    return parseFloat(bet.replace(/\s+BET$/, ''))
   }
 
-  static toBET(bet) {
-    return bet.toFixed(4) + ' BET'
+  static toBET(num) {
+    // eslint-disable-next-line
+    let [integer, decimals] = num
+      .toString()
+      .match(/^-?\d+(?:\.\d{0,4})?/)[0]
+      .split('.')
+
+    if (decimals) {
+      for (let i = decimals.length; i < 4; i++) {
+        decimals += '0'
+      }
+    } else {
+      decimals = '0000'
+    }
+
+    return `${integer}.${decimals} BET`
+  }
+
+  static async svg2img(url, options) {
+    const response = await fetch(url)
+    const svg = await response.text()
+    const image = await svgToImage(svg, options)
+    return image
   }
 }
 
 function deepExtend(obj) {
   var parentRE = /#{\s*?_\s*?}/,
     source,
-
-    isAssign = function(oProp, sProp) {
-      return (_.isUndefined(oProp) || _.isNull(oProp) || _.isFunction(oProp) || _.isNull(sProp) || _.isDate(sProp))
+    isAssign = function (oProp, sProp) {
+      return (
+        _.isUndefined(oProp) ||
+        _.isNull(oProp) ||
+        _.isFunction(oProp) ||
+        _.isNull(sProp) ||
+        _.isDate(sProp)
+      )
     },
-
-    procAssign = function(oProp, sProp, propName) {
+    procAssign = function (oProp, sProp, propName) {
       // Perform a straight assignment
       // Assign for object properties & return for array members
-      return obj[propName] = _.clone(sProp)
+      return (obj[propName] = _.clone(sProp))
     },
-
-    hasRegex = function(oProp, sProp) {
-      return (_.isString(sProp) && parentRE.test(sProp))
+    hasRegex = function (oProp, sProp) {
+      return _.isString(sProp) && parentRE.test(sProp)
     },
-
-    procRegex = function(oProp, sProp, propName) {
+    procRegex = function (oProp, sProp, propName) {
       // Perform a string.replace using parentRE if oProp is a string
       if (!_.isString(oProp)) {
         // We're being optimistic at the moment
         // throw new Error('Trying to combine a string with a non-string (' + propName + ')');
       }
       // Assign for object properties & return for array members
-      return obj[propName] = sProp.replace(parentRE, oProp)
+      return (obj[propName] = sProp.replace(parentRE, oProp))
     },
-
-    hasArray = function(oProp, sProp) {
-      return (_.isArray(oProp) || _.isArray(sProp))
+    hasArray = function (oProp, sProp) {
+      return _.isArray(oProp) || _.isArray(sProp)
     },
-
-    procArray = function(oProp, sProp, propName) {
+    procArray = function (oProp, sProp, propName) {
       // extend oProp if both properties are arrays
       if (!_.isArray(oProp) || !_.isArray(sProp)) {
-        throw new Error('Trying to combine an array with a non-array (' + propName + ')')
+        throw new Error(
+          'Trying to combine an array with a non-array (' + propName + ')'
+        )
       }
       var tmp = _.deepExtend(obj[propName], sProp)
       // Assign for object properties & return for array members
-      return obj[propName] = _.reject(tmp, _.isNull)
+      return (obj[propName] = _.reject(tmp, _.isNull))
     },
-
-    hasObject = function(oProp, sProp) {
-      return (_.isObject(oProp) || _.isObject(sProp))
+    hasObject = function (oProp, sProp) {
+      return _.isObject(oProp) || _.isObject(sProp)
     },
-
-    procObject = function(oProp, sProp, propName) {
+    procObject = function (oProp, sProp, propName) {
       // extend oProp if both properties are objects
       if (!_.isObject(oProp) || !_.isObject(sProp)) {
-        throw new Error('Trying to combine an object with a non-object (' + propName + ')')
+        throw new Error(
+          'Trying to combine an object with a non-object (' + propName + ')'
+        )
       }
       // Assign for object properties & return for array members
-      return obj[propName] = _.deepExtend(oProp, sProp)
+      return (obj[propName] = _.deepExtend(oProp, sProp))
     },
-
-    procMain = function(propName) {
+    procMain = function (propName) {
       var oProp = obj[propName],
         sProp = source[propName]
 
@@ -113,8 +159,7 @@ function deepExtend(obj) {
         procAssign(oProp, sProp, propName)
       }
     },
-
-    procAll = function(src) {
+    procAll = function (src) {
       source = src
       Object.keys(source).forEach(procMain)
     }
@@ -124,12 +169,12 @@ function deepExtend(obj) {
   return obj
 }
 
-_.mixin({ 'deepExtend': deepExtend })
+_.mixin({ deepExtend: deepExtend })
 
 function deepClone(object) {
   const clone = _.clone(object)
 
-  _.each(clone, function(value, key) {
+  _.each(clone, function (value, key) {
     if (_.isObject(value)) {
       clone[key] = deepClone(value)
     }
@@ -138,4 +183,4 @@ function deepClone(object) {
   return clone
 }
 
-_.mixin({ 'deepClone': deepClone })
+_.mixin({ deepClone: deepClone })
