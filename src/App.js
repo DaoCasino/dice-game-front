@@ -10,6 +10,7 @@ import DeepModel from './utils/DeepModel'
 import Resources from './utils/Resources'
 import Sounds from './utils/Sounds'
 import { CurrencyManager } from './utils/CurrencyManager'
+import Utils from './utils/Utils'
 
 const AppState = {
   Preparing: 'preparing',
@@ -31,7 +32,7 @@ const AppEvent = {
 }
 
 class App {
-  static instance = null;
+  static instance = null
 
   getPayoutOnWin(bet, number) {
     return bet * this.getPayout(number)
@@ -175,16 +176,26 @@ class App {
   }
 
   async initCurrency() {
+    const urlParams = new URLSearchParams(window.location.search)
+
+    const cur = urlParams.get('cur')
+    const curIcon = urlParams.get('curIcon')
+    const curPrecision = urlParams.get('curPrecision')
+
     this.currencyManager = new CurrencyManager()
 
     await this.currencyManager.setData([{
-      type: 'BET',
+      type: cur,
+      precision: curPrecision,
       sources: [
-        { key: 'bet', src: PIXI.Texture.from(Resources.get('eos_png')) },
+        {
+          key: 'bet',
+          src: new PIXI.Texture(new PIXI.BaseTexture(await Utils.svg2img(curIcon, { width: 24, height: 24 }))),
+        },
       ],
     }])
 
-    this.currencyManager.setCurrency('BET')
+    this.currencyManager.setCurrency(cur)
   }
 
   async initInterface() {

@@ -1,4 +1,5 @@
 import _ from 'underscore'
+import svgToImage from 'svg-to-image'
 
 export default class Utils {
   static percent(value, percent) {
@@ -22,11 +23,38 @@ export default class Utils {
   }
 
   static betToFloat(bet) {
-    return parseFloat(bet.replace(/\s+BET$/,''))
+    return parseFloat(bet.replace(/\s+BET$/, ''))
   }
 
   static toBET(bet) {
     return bet.toFixed(4) + ' BET'
+  }
+
+  static svg2img(url, options) {
+    return new Promise((resolve, error) => {
+      const ajax = new XMLHttpRequest()
+
+      ajax.open('GET', url, true)
+      ajax.send()
+      ajax.onload = function(e) {
+        svgToImage(ajax.responseText, (err, image) => {
+          if (err) {
+            error(err)
+          }
+
+          if (options) {
+            if ('width' in options) {
+              image.width = options.width
+            }
+            if ('height' in options) {
+              image.height = options.height
+            }
+          }
+
+          resolve(image)
+        })
+      }
+    })
   }
 }
 
