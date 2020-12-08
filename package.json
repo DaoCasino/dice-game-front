@@ -24,7 +24,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@daocasino/platform-back-js-lib": "1.5.5",
+    "@daocasino/platform-back-js-lib": "1.7.10",
     "@pixi/filter-drop-shadow": "*",
     "backbone": "^1.4.0",
     "eventemitter3": "^4.0.7",
