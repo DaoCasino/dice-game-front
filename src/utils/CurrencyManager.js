@@ -86,7 +86,7 @@ export class CurrencyManager extends EventEmitter {
   async setData(props) {
     this.release()
 
-    await Promise.all(props.map(this.parseData))
+    await Promise.all(props.map(props => this.parseData(props)))
   }
 
   release(currency = null) {
