@@ -46,28 +46,29 @@ export default class Utils {
 
   static svg2img(url, options) {
     return new Promise((resolve, error) => {
-      const ajax = new XMLHttpRequest()
-
-      ajax.open('GET', url, true)
-      ajax.send()
-      ajax.onload = function(e) {
-        svgToImage(ajax.responseText, (err, image) => {
-          if (err) {
-            error(err)
-          }
-
-          if (options) {
-            if ('width' in options) {
-              image.width = options.width
+      fetch(url, { method: 'GET' })
+        .then(response => response.text())
+        .then(response => {
+          svgToImage(response, (err, image) => {
+            if (err) {
+              error(err)
             }
-            if ('height' in options) {
-              image.height = options.height
-            }
-          }
 
-          resolve(image)
+            if (options) {
+              if ('width' in options) {
+                image.width = options.width
+              }
+              if ('height' in options) {
+                image.height = options.height
+              }
+            }
+
+            resolve(image)
+          })
         })
-      }
+        .catch(err => {
+          error(err)
+        })
     })
   }
 }
