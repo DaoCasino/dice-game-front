@@ -207,7 +207,7 @@ class App {
 
     const cur = urlParams.get('cur')
     const curIcon = urlParams.get('curIcon')
-    const curPrecision = parseFloat(urlParams.get('curPrecision'))
+    const curPrecision = parseInt(urlParams.get('curPrecision'))
 
     let image = null
 
