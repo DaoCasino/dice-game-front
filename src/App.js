@@ -32,7 +32,7 @@ const AppEvent = {
 }
 
 class App {
-  static instance = null
+  static instance = null;
 
   getPayoutOnWin(bet, number) {
     return bet * this.getPayout(number)
@@ -207,12 +207,12 @@ class App {
 
     const cur = urlParams.get('cur')
     const curIcon = urlParams.get('curIcon')
-    const curPrecision = parseInt(urlParams.get('curPrecision'))
+    const curPrecision = parseInt(urlParams.get('curPrecision'), 10)
 
     let image = null
 
     try {
-      image = await Utils.svg2img(curIcon, { width: 24, height: 24 })
+      image = await Utils.svg2img(curIcon, { width: 24*3, height: 24*3 })
 
     } catch (error) {
       console.error('App::setupCurrency() - invalid imageUrl')
