@@ -32,6 +32,9 @@
     "supports": {
         "demoMode": true
     },
+    "dependencies": {
+        "webgl": true
+    },
     "explorerSpec": {
         "mappings": {},
         "transformers": [

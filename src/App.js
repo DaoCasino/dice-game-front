@@ -9,6 +9,8 @@ import MainScreen from './screens/MainScreen'
 import DeepModel from './utils/DeepModel'
 import Resources from './utils/Resources'
 import Sounds from './utils/Sounds'
+import { CurrencyManager } from './utils/CurrencyManager'
+import Utils from './utils/Utils'
 
 const AppState = {
   Preparing: 'preparing',
@@ -30,6 +32,8 @@ const AppEvent = {
 }
 
 class App {
+  static instance = null
+
   getPayoutOnWin(bet, number) {
     return bet * this.getPayout(number)
   }
@@ -52,6 +56,10 @@ class App {
 
   getHouseEdge() {
     return 0.01
+  }
+
+  constructor() {
+    App.instance = this
   }
 
   async checkInsufficientBalance() {
@@ -110,6 +118,7 @@ class App {
 
     await this.loadFont()
     await this.loadResources()
+    await this.initCurrency()
     await this.initSounds()
 
     this.loadCookies()
@@ -164,6 +173,81 @@ class App {
         },
       })
     })
+  }
+
+  async setupDefaultCurrency() {
+    const curr = 'BET'
+    const precision = 2
+
+    await this.currencyManager.setData([{
+      type: curr,
+      precision: precision,
+      sources: [
+        {
+          key: 'bet',
+          src: PIXI.Texture.from(Resources.get('eos_png')),
+        },
+      ],
+    }])
+
+    this.currencyManager.setCurrency(curr)
+
+    console.warn('App::setupDefaultCurrency() - currency fallback to default')
+  }
+
+  async setupCurrency() {
+    const urlParams = new URLSearchParams(window.location.search)
+    const hasAllParams = urlParams.has('cur') && urlParams.has('curIcon') && urlParams.has('curPrecision')
+
+    if (!hasAllParams) {
+      console.error('App::setupCurrency() - invalid urlParams')
+
+      return Promise.reject()
+    }
+
+    const cur = urlParams.get('cur')
+    const curIcon = urlParams.get('curIcon')
+    const curPrecision = parseInt(urlParams.get('curPrecision'), 10)
+
+    const scale = 3
+
+    let image = null
+
+    try {
+      image = await Utils.svg2img(curIcon, { width: 24 * scale, height: 24 * scale })
+
+    } catch (error) {
+      console.error('App::setupCurrency() - invalid imageUrl')
+
+      return Promise.reject()
+    }
+
+    await this.currencyManager.setData([{
+      type: cur,
+      precision: curPrecision,
+      scale: scale,
+      sources: [
+        {
+          key: 'bet',
+          src: new PIXI.Texture(new PIXI.BaseTexture(image)),
+        },
+      ],
+    }])
+
+    this.currencyManager.setCurrency(cur)
+
+    return Promise.resolve()
+  }
+
+  async initCurrency() {
+    this.currencyManager = new CurrencyManager()
+
+    try {
+      await this.setupCurrency()
+
+    } catch (e) {
+      await this.setupDefaultCurrency()
+    }
   }
 
   async initInterface() {
