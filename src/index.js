@@ -12,6 +12,4 @@ document.addEventListener('DOMContentLoaded', () => {
 
 window.addEventListener('beforeunload', (e) => {
   window.app.disconnect()
-    .then(e => {
-    })
 }, false)
