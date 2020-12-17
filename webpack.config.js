@@ -232,7 +232,7 @@ module.exports = function () {
             // smaller than specified limit in bytes as data URLs to avoid requests.
             // A missing `test` is equivalent to a match.
             {
-              test: [/\.bmp$/, /\.gif$/, /\.jpe?g$/, /\.png$/, /\.mp3$/],
+              test: [/\.bmp$/, /\.gif$/, /\.jpe?g$/, /\.png$/],
               loader: require.resolve('url-loader'),
               options: {
                 limit: imageInlineSizeLimit,
@@ -413,8 +413,6 @@ module.exports = function () {
       tls: 'empty',
       child_process: 'empty',
     },
-    // Turn off performance processing because we utilize
-    // our own hints via the FileSizeReporter
     performance: false,
   }
 }
