@@ -2,6 +2,8 @@ import * as PIXI from 'pixi.js'
 import WebFont from 'webfontloader'
 import _ from 'underscore'
 
+import './App.css'
+
 import { Dice } from './Dice'
 import { DiceMock } from './DiceMock'
 
@@ -32,7 +34,7 @@ const AppEvent = {
 }
 
 class App {
-  static instance = null
+  static instance = null;
 
   getPayoutOnWin(bet, number) {
     return bet * this.getPayout(number)
