@@ -2,6 +2,7 @@ package-lock.json
 /node_modules
 
 /dist
+/build
 
 .DS_Store
 
