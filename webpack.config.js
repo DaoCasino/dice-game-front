@@ -362,7 +362,7 @@ module.exports = function () {
           {},
           {
             // For iframe relative paths
-            publicPath: './',
+            publicPath: paths.publicUrlOrPath,
             inject: true,
             template: paths.appHtml,
           },
