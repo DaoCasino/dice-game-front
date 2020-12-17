@@ -361,6 +361,8 @@ module.exports = function () {
         Object.assign(
           {},
           {
+            // For iframe relative paths
+            publicPath: './',
             inject: true,
             template: paths.appHtml,
           },
