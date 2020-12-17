@@ -8,7 +8,7 @@ import Rectangle from '../../widgets/Rectangle'
 import SpinLog from './SpinLog'
 import InputLabel from '../../widgets/InputLabel'
 import Resources from '../../utils/Resources'
-import { AppEvent } from '../../App'
+import { App, AppEvent } from '../../App'
 
 export default class ManualBetting extends Widget {
   constructor(gameModel) {
@@ -92,9 +92,8 @@ export default class ManualBetting extends Widget {
       alpha: 0.4,
     })
 
-    this.betValueSprite = new PIXI.Sprite(PIXI.Texture.from(Resources.get('eos_png')))
+    this.betValueSprite = App.instance.currencyManager.createSprite('bet')
     this.betValueSprite.anchor.set(0.5)
-    this.betValueSprite.scale.set(1)
 
     this.betValueLabel = new InputLabel({
       //disable: true,
@@ -210,9 +209,8 @@ export default class ManualBetting extends Widget {
       },
     })
 
-    this.payoutValueSprite = new PIXI.Sprite(PIXI.Texture.from(Resources.get('eos_png')))
+    this.payoutValueSprite = App.instance.currencyManager.createSprite('bet')
     this.payoutValueSprite.anchor.set(0.5)
-    this.payoutValueSprite.scale.set(1)
 
     this.gameModel.on('change:betMin', () => {
       this.betValueLabel.min = this.gameModel.get('betMin')
