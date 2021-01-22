@@ -113,18 +113,18 @@
   resolved "https://registry.yarnpkg.com/@csstools/normalize.css/-/normalize.css-11.0.1.tgz#31ffab0bff5f4f09551e059359bc1977ac83a974"
   integrity sha512-kUlWZHQkll+lOlYdj7dg8XwziO9WALkfG2dAXLITZMB8gO99CXQBH5W/HleXC3YwWFWXVxe1UClMk/2qsB9oAw==
 
-"@daocasino/platform-back-js-lib@1.7.10":
-  version "1.7.10"
-  resolved "https://registry.yarnpkg.com/@daocasino/platform-back-js-lib/-/platform-back-js-lib-1.7.10.tgz#b904b329f50bd29f725e68e802b42fa76e2ca0e4"
-  integrity sha512-MXOidjv2PNqXmy288CH1clZmgfcPR7sdPKil8ES5dh/GH5oUzl8fmKKdTlZq74jg4Z3j9uxJCgh0TJaP7o0BpQ==
+"@daocasino/platform-back-js-lib@1.7.12":
+  version "1.7.12"
+  resolved "https://registry.yarnpkg.com/@daocasino/platform-back-js-lib/-/platform-back-js-lib-1.7.12.tgz#aebe131301b34eb99592588cffdd573df8028e6a"
+  integrity sha512-1qV3cLoAUtM6blLC/M5agypcH6KJAMdLso/VYnHmwSqKDEwz8RgMLLLMp+mnUd4jtqz2yJmO3i1IC7Qa0ccT7g==
   dependencies:
-    "@daocasino/platform-messaging" "0.0.9"
+    "@daocasino/platform-messaging" "0.1.1"
     jsonwebtoken "^8.5.1"
 
-"@daocasino/platform-messaging@0.0.9":
-  version "0.0.9"
-  resolved "https://registry.yarnpkg.com/@daocasino/platform-messaging/-/platform-messaging-0.0.9.tgz#cd65811b9b6f47b355d2060de512c075d029752f"
-  integrity sha512-5BWiRK8nALT7Jiyj1nHk5TSPzRdFoyMMzcmJxW+umunzcMkL7fxpqXDmzX0Wg594ln1FWrmUw47qe2EXWasRlA==
+"@daocasino/platform-messaging@0.1.1":
+  version "0.1.1"
+  resolved "https://registry.yarnpkg.com/@daocasino/platform-messaging/-/platform-messaging-0.1.1.tgz#7986ff4686123bf25a3fc09b8ab3a602a4696cd3"
+  integrity sha512-Jiq8LzPNth7H+ukBQ3TEDbiTI0l8KRVWWChoqM3TvGZum3glbugjjbrjPqaepj0hcod0Vhbu5PKB0Zlcgzanrw==
 
 "@pixi/accessibility@5.1.5", "@pixi/accessibility@^5.1.4":
   version "5.1.5"
