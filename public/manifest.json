@@ -1,8 +1,8 @@
 {
     "name": "Dice",
     "icons": {
-        "small": "/163x238_dc.png",
-        "big": "/312x312_dc_x1.png"
+        "small": "/images/163x238_dc.png",
+        "big": "/images/312x312_dc_x1.png"
     },
     "description": "Play Dice online at the safest no deposit blockchain casino %s. All games are on-chain and secured by fair and tamper-proof algorithm signidice.",
     "text": "lorem ipsum",
@@ -10,22 +10,22 @@
     "optimizedIcons": {
         "small": {
             "1x": [
-                "/163x238_dc_x1.webp",
-                "/163x238_dc_x1.png"
+                "/images/163x238_dc_x1.webp",
+                "/images/163x238_dc_x1.png"
             ],
             "2x": [
-                "/163x238_dc_x3.webp",
-                "/163x238_dc_x3.png"
+                "/images/163x238_dc_x3.webp",
+                "/images/163x238_dc_x3.png"
             ]
         },
         "big": {
             "1x": [
-                "/312x312_dc_x1.webp",
-                "/312x312_dc_x1.png"
+                "/images/312x312_dc_x1.webp",
+                "/images/312x312_dc_x1.png"
             ],
             "2x": [
-                "/312x312_dc_x3.webp",
-                "/312x312_dc_x3.png"
+                "/images/312x312_dc_x3.webp",
+                "/images/312x312_dc_x3.png"
             ]
         }
     },
