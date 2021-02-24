@@ -7,6 +7,7 @@ export default {
 
   deposit: 10,
   bet: 10,
+  betStep: 1,
   betMin: 1,
   betMax: 10000,
   betOnWin: 0,

@@ -20,7 +20,7 @@ export default class Betting extends PIXI.Container {
 
     this.mask = new PIXI.Graphics()
 
-    const tabLabelStyle = { 
+    const tabLabelStyle = {
       fill: '0xffffff',
       fontFamily: 'Rajdhani',
       align: 'center',
@@ -64,14 +64,27 @@ export default class Betting extends PIXI.Container {
     this.addChild(this.panelContainer)
 
     this.panels.forEach(panel => {
+      panel.removeAllListeners()
+
       panel.on('roll', () => this.emit('roll'))
       panel.on('rollstart', () => this.emit('rollstart'))
       panel.on('rollstop', () => this.emit('rollstop'))
       panel.on('betMax', () => this.emit('betMax'))
       panel.on('betHalf', () => this.emit('betHalf'))
       panel.on('betDouble', () => this.emit('betDouble'))
+      panel.on('betMinus', () => this.emit('betMinus'))
+      panel.on('betPlus', () => this.emit('betPlus'))
       panel.on('autospin', (count) => this.emit('autospin', count))
       panel.on('proof', (props) => this.emit('proof', props))
+
+      panel.on('onWinMinus', () => this.emit('onWinMinus'))
+      panel.on('onWinPlus', () => this.emit('onWinPlus'))
+      panel.on('onLossMinus', () => this.emit('onLossMinus'))
+      panel.on('onLossPlus', () => this.emit('onLossPlus'))
+      panel.on('onStopOnWinMinus', () => this.emit('onStopOnWinMinus'))
+      panel.on('onStopOnWinPlus', () => this.emit('onStopOnWinPlus'))
+      panel.on('onStopOnLossMinus', () => this.emit('onStopOnLossMinus'))
+      panel.on('onStopOnLossPlus', () => this.emit('onStopOnLossPlus'))
 
       this.panelContainer.addChild(panel)
     })
