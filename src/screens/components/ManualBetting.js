@@ -96,7 +96,7 @@ export default class ManualBetting extends Widget {
     this.betValueSprite.anchor.set(0.5)
 
     this.betValueLabel = new InputLabel({
-      //disable: true,
+      disable: true,
       type: 'number',
       min: this.gameModel.get('betMin'),
       max: this.gameModel.get('betMax'),
@@ -118,6 +118,8 @@ export default class ManualBetting extends Widget {
       this.maxBetButton.set('interactive', false)
       this.betHalfButton.set('interactive', false)
       this.betDoubleButton.set('interactive', false)
+      this.betMinusButton.set('interactive', false)
+      this.betPlusButton.set('interactive', false)
     })
 
     this.betValueLabel.on('blur', (value) => {
@@ -125,6 +127,8 @@ export default class ManualBetting extends Widget {
       this.maxBetButton.set('interactive', true)
       this.betHalfButton.set('interactive', true)
       this.betDoubleButton.set('interactive', true)
+      this.betMinusButton.set('interactive', true)
+      this.betPlusButton.set('interactive', true)
 
       if (value !== '') {
         const bet = parseFloat(parseFloat(value).toFixed(4))
@@ -178,6 +182,50 @@ export default class ManualBetting extends Widget {
       },
     })
     this.betDoubleButton.on('pointerup', () => this.emit('betDouble'))
+
+    this.betMinusButton = new Button({
+      disable: true,
+      background: {
+        borderRadius: 6,
+        gradientFrom: '#5792f0',
+        gradientTo: '#6e62e4',
+        width: 40,
+        height: 40,
+      },
+      label: {
+        text: '-',
+        fontFamily: 'Rajdhani',
+        fontSize: 16,
+        align: 'center',
+        anchor: {
+          x: 0.5,
+          y: 0.5,
+        },
+      },
+    })
+    this.betMinusButton.on('pointerup', () => this.emit('betMinus'))
+
+    this.betPlusButton = new Button({
+      disable: true,
+      background: {
+        borderRadius: 6,
+        gradientFrom: '#5792f0',
+        gradientTo: '#6e62e4',
+        width: 40,
+        height: 40,
+      },
+      label: {
+        text: '+',
+        fontFamily: 'Rajdhani',
+        fontSize: 16,
+        align: 'center',
+        anchor: {
+          x: 0.5,
+          y: 0.5,
+        },
+      },
+    })
+    this.betPlusButton.on('pointerup', () => this.emit('betPlus'))
 
     this.payoutBackground = new Rectangle({
       fill: '0x000000',
@@ -238,17 +286,19 @@ export default class ManualBetting extends Widget {
     this.gameModel.on('change:connected', (e) => {
       if (e.changed.connected) {
         this.rollButton.set('disable', false)
-        this.betValueLabel.set('disable', false)
         this.maxBetButton.set('disable', false)
         this.betHalfButton.set('disable', false)
         this.betDoubleButton.set('disable', false)
+        this.betMinusButton.set('disable', false)
+        this.betPlusButton.set('disable', false)
 
       } else {
         this.rollButton.set('disable', true)
-        this.betValueLabel.set('disable', true)
         this.maxBetButton.set('disable', true)
         this.betHalfButton.set('disable', true)
         this.betDoubleButton.set('disable', true)
+        this.betMinusButton.set('disable', true)
+        this.betPlusButton.set('disable', true)
       }
     })
 
@@ -308,6 +358,8 @@ export default class ManualBetting extends Widget {
     this.addChild(this.betValueSprite)
     this.addChild(this.betHalfButton)
     this.addChild(this.betDoubleButton)
+    this.addChild(this.betMinusButton)
+    this.addChild(this.betPlusButton)
     this.addChild(this.payoutBackground)
     this.addChild(this.payoutLabel)
     this.addChild(this.payoutValueLabel)
@@ -371,7 +423,9 @@ export default class ManualBetting extends Widget {
 
     this.betBackground.set({
       y: this.betLabel.get('y') + this.betLabel.get('height') / 2 + 8,
-      width: this.get('width') - this.betHalfButton.get('width') - this.betDoubleButton.get('width') - 20,
+      width: this.get('width') -
+        this.betMinusButton.get('width') - this.betPlusButton.get('width') -
+        this.betHalfButton.get('width') - this.betDoubleButton.get('width') - 5 * 4,
     })
 
     this.betValueSprite.position.set(
@@ -385,9 +439,19 @@ export default class ManualBetting extends Widget {
       width: (this.betBackground.get('width') - 55),
     })
 
-    this.betHalfButton.set({
-      x: this.betBackground.get('width') + 15,
+    this.betMinusButton.set({
+      x: this.betBackground.get('width') + 5,
       y: this.betLabel.get('y') + this.betLabel.get('height') / 2 + 8,
+    })
+
+    this.betPlusButton.set({
+      x: this.betMinusButton.get('x') + this.betMinusButton.get('width') + 5,
+      y: this.betMinusButton.get('y'),
+    })
+
+    this.betHalfButton.set({
+      x: this.betPlusButton.get('x') + this.betHalfButton.get('width') + 5,
+      y: this.betPlusButton.get('y'),
     })
 
     this.betDoubleButton.set({
