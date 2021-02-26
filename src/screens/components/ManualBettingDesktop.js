@@ -598,7 +598,7 @@ export default class ManualBetting extends Widget {
 
     this.betBackground.set({
       y: this.betLabel.get('y') + this.betLabel.get('height') / 2 + 8,
-      width: this.get('width') * 0.5 - this.betHalfButton.get('width') - this.betDoubleButton.get('width') - 20,
+      width: this.get('width') * 0.5 - this.betHalfButton.get('width') - this.betDoubleButton.get('width') - 5,
     })
 
     this.betValueLabel.set({
@@ -613,7 +613,7 @@ export default class ManualBetting extends Widget {
     )
 
     this.betHalfButton.set({
-      x: this.betBackground.get('width') + 15,
+      x: this.betBackground.get('width') + 5,
       y: this.betLabel.get('y') + this.betLabel.get('height') / 2 + 8,
     })
 
