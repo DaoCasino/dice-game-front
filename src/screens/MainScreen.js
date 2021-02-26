@@ -198,6 +198,32 @@ export default class MainScreen extends BaseScreen {
 
       this.updateSliderValue(this.slider.get('value'))
     })
+    this.betting.on('betMinus', () => {
+      const balance = this.gameModel.get('balance')
+      const betStep = this.gameModel.get('betStep')
+      const bet = this.gameModel.get('bet') - betStep
+
+      let calculatedBet = Math.max(this.gameModel.get('betMin'), parseFloat(bet))
+
+      if (calculatedBet > balance) {
+        calculatedBet = balance
+      }
+      this.gameModel.set('bet', calculatedBet)
+
+      this.updateSliderValue(this.slider.get('value'))
+    })
+    this.betting.on('betPlus', () => {
+      const balance = this.gameModel.get('balance')
+      const betStep = this.gameModel.get('betStep')
+      const bet = this.gameModel.get('bet') + betStep
+      const betMax = this.gameModel.get('betMax')
+
+      const max = Math.min(betMax, balance)
+
+      this.gameModel.set('bet', Math.min(parseFloat(bet), max))
+
+      this.updateSliderValue(this.slider.get('value'))
+    })
     this.betting.on('autospin', (count) => {
       console.log(count)
       this.gameModel.set('autospin', count)
@@ -317,6 +343,8 @@ export default class MainScreen extends BaseScreen {
 
           const stopOnWin = this.gameModel.get('stopOnWin')
           const stopOnLoss = this.gameModel.get('stopOnLoss')
+
+          console.log(stopOnLoss, autoSpinBalance)
 
           let stopRoll = false
 

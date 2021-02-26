@@ -149,6 +149,29 @@ class ChangeBetPanel extends Widget {
 }
 
 export default class AutoBetting extends Widget {
+  createButton(text) {
+    return new Button({
+      disable: true,
+      background: {
+        borderRadius: 6,
+        gradientFrom: '#5792f0',
+        gradientTo: '#6e62e4',
+        width: 40,
+        height: 40,
+      },
+      label: {
+        text: text,
+        fontFamily: 'Rajdhani',
+        fontSize: 16,
+        align: 'center',
+        anchor: {
+          x: 0.5,
+          y: 0.5,
+        },
+      },
+    })
+  }
+
   constructor(gameModel) {
     super({})
 
@@ -237,6 +260,12 @@ export default class AutoBetting extends Widget {
       alpha: 0.4,
     })
 
+    this.betMinusButton = this.createButton('-')
+    this.betMinusButton.on('pointerup', () => this.emit('betMinus'))
+
+    this.betPlusButton = this.createButton('+')
+    this.betPlusButton.on('pointerup', () => this.emit('betPlus'))
+
     this.betValueSprite = App.instance.currencyManager.createSprite('bet')
     this.betValueSprite.anchor.set(0.5)
 
@@ -262,8 +291,20 @@ export default class AutoBetting extends Widget {
       this.rollButton.set('interactive', false)
       this.onLossPanel.set('interactive', false)
       this.onWinPanel.set('interactive', false)
+      this.betMinusButton.set('interactive', false)
+      this.betPlusButton.set('interactive', false)
       this.betHalfButton.set('interactive', false)
       this.betDoubleButton.set('interactive', false)
+
+      this.onWinValueMinusButton.set('interactive', false)
+      this.onWinValuePlusButton.set('interactive', false)
+      this.onLossValueMinusButton.set('interactive', false)
+      this.onLossValuePlusButton.set('interactive', false)
+      this.onStopOnWinValueMinusButton.set('interactive', false)
+      this.onStopOnWinValuePlusButton.set('interactive', false)
+      this.onStopOnLossValueMinusButton.set('interactive', false)
+      this.onStopOnLossValuePlusButton.set('interactive', false)
+
       this.autospinButtons.forEach(button => button.set('interactive', false))
     })
 
@@ -273,6 +314,16 @@ export default class AutoBetting extends Widget {
       this.onWinPanel.set('interactive', true)
       this.betHalfButton.set('interactive', true)
       this.betDoubleButton.set('interactive', true)
+
+      this.onWinValueMinusButton.set('interactive', true)
+      this.onWinValuePlusButton.set('interactive', true)
+      this.onLossValueMinusButton.set('interactive', true)
+      this.onLossValuePlusButton.set('interactive', true)
+      this.onStopOnWinValueMinusButton.set('interactive', true)
+      this.onStopOnWinValuePlusButton.set('interactive', true)
+      this.onStopOnLossValueMinusButton.set('interactive', true)
+      this.onStopOnLossValuePlusButton.set('interactive', true)
+
       this.autospinButtons.forEach(button => button.set('interactive', true))
 
       if (value !== '') {
@@ -352,6 +403,8 @@ export default class AutoBetting extends Widget {
     this.content.addChild(this.betLabel)
     this.content.addChild(this.betValueLabel)
     this.content.addChild(this.betValueSprite)
+    this.content.addChild(this.betMinusButton)
+    this.content.addChild(this.betPlusButton)
     this.content.addChild(this.betHalfButton)
     this.content.addChild(this.betDoubleButton)
     this.content.addChild(this.autospinLabel)
@@ -448,7 +501,7 @@ export default class AutoBetting extends Widget {
     })
 
     this.onWinValueLabel = new InputLabel({
-      //disable: true,
+      disable: true,
       type: 'number',
       min: 0,
       max: this.gameModel.get('betOnWinIncreaseMax'),
@@ -740,6 +793,31 @@ export default class AutoBetting extends Widget {
       }
     })
 
+    this.onWinValueMinusButton = this.createButton('-')
+    this.onWinValueMinusButton.on('pointerup', () => this.gameModel.set('betOnWin', Math.max(0, this.gameModel.get('betOnWin') - 1)))
+
+    this.onWinValuePlusButton = this.createButton('+')
+    this.onWinValuePlusButton.on('pointerup', () => this.gameModel.set('betOnWin', Math.min(this.gameModel.get('betOnWinDecreaseMax'), this.gameModel.get('betOnWin') + 1)))
+
+    this.onLossValueMinusButton = this.createButton('-')
+    this.onLossValueMinusButton.on('pointerup', () => this.gameModel.set('betOnLoss', Math.max(0, this.gameModel.get('betOnLoss') - 1)))
+
+    this.onLossValuePlusButton = this.createButton('+')
+    this.onLossValuePlusButton.on('pointerup', () => this.gameModel.set('betOnLoss', Math.min(this.gameModel.get('betOnLossDecreaseMax'), this.gameModel.get('betOnLoss') + 1)))
+
+    this.onStopOnWinValueMinusButton = this.createButton('-')
+    this.onStopOnWinValueMinusButton.on('pointerup', () => this.gameModel.set('stopOnWin', Math.max(0, this.gameModel.get('stopOnWin') - 1)))
+
+    this.onStopOnWinValuePlusButton = this.createButton('+')
+    this.onStopOnWinValuePlusButton.on('pointerup', () => this.gameModel.set('stopOnWin', Math.min(this.gameModel.get('betOnWinIncreaseMax'), this.gameModel.get('stopOnWin') + 1)))
+
+    this.onStopOnLossValueMinusButton = this.createButton('-')
+    this.onStopOnLossValueMinusButton.on('pointerup', () => this.gameModel.set('stopOnLoss', Math.max(0, this.gameModel.get('stopOnLoss') - 1)))
+
+    this.onStopOnLossValuePlusButton = this.createButton('+')
+    this.onStopOnLossValuePlusButton.on('pointerup', () => this.gameModel.set('stopOnLoss', Math.min(this.gameModel.get('betOnLossIncreaseMax'), this.gameModel.get('stopOnLoss') + 1)))
+
+
     this.content.addChild(this.onWinLabel)
     this.content.addChild(this.onWinPanel)
     this.content.addChild(this.onWinValueBackground)
@@ -760,6 +838,15 @@ export default class AutoBetting extends Widget {
     this.content.addChild(this.stopOnLossValueBackground)
     this.content.addChild(this.stopOnLossValueSprite)
     this.content.addChild(this.stopOnLossValueLabel)
+
+    this.content.addChild(this.onWinValueMinusButton)
+    this.content.addChild(this.onWinValuePlusButton)
+    this.content.addChild(this.onLossValueMinusButton)
+    this.content.addChild(this.onLossValuePlusButton)
+    this.content.addChild(this.onStopOnWinValueMinusButton)
+    this.content.addChild(this.onStopOnWinValuePlusButton)
+    this.content.addChild(this.onStopOnLossValueMinusButton)
+    this.content.addChild(this.onStopOnLossValuePlusButton)
 
     this.gameModel.on('change:bet', (e) => {
       this.betValueLabel.set('text', this.gameModel.get('bet'))
@@ -821,43 +908,41 @@ export default class AutoBetting extends Widget {
     this.gameModel.on('change:connected', (e) => {
       if (e.changed.connected) {
         this.rollButton.set('disable', false)
-        this.betValueLabel.set('disable', false)
         this.autospinButtons.forEach(button => button.set('disable', false))
         this.onLossPanel.set('disable', false)
         this.onWinPanel.set('disable', false)
+        this.betMinusButton.set('disable', false)
+        this.betPlusButton.set('disable', false)
         this.betHalfButton.set('disable', false)
         this.betDoubleButton.set('disable', false)
 
-        //if (this.gameModel.get('betOnWinAction') !== 'reset') {
-        this.onWinValueLabel.set('disable', false)
-        //}
-
-        //if (this.gameModel.get('betOnLossAction') !== 'reset') {
-        this.onLossValueLabel.set('disable', false)
-        //}
-
-        this.stopOnWinValueLabel.set('disable', false)
-        this.stopOnLossValueLabel.set('disable', false)
+        this.onWinValueMinusButton.set('disable', false)
+        this.onWinValuePlusButton.set('disable', false)
+        this.onLossValueMinusButton.set('disable', false)
+        this.onLossValuePlusButton.set('disable', false)
+        this.onStopOnWinValueMinusButton.set('disable', false)
+        this.onStopOnWinValuePlusButton.set('disable', false)
+        this.onStopOnLossValueMinusButton.set('disable', false)
+        this.onStopOnLossValuePlusButton.set('disable', false)
 
       } else {
         this.rollButton.set('disable', true)
-        this.betValueLabel.set('disable', true)
         this.autospinButtons.forEach(button => button.set('disable', true))
         this.onLossPanel.set('disable', true)
         this.onWinPanel.set('disable', true)
+        this.betMinusButton.set('disable', true)
+        this.betPlusButton.set('disable', true)
         this.betHalfButton.set('disable', true)
         this.betDoubleButton.set('disable', true)
 
-        //if (this.gameModel.get('betOnWinAction') !== 'reset') {
-        this.onWinValueLabel.set('disable', true)
-        //}
-
-        //if (this.gameModel.get('betOnLossAction') !== 'reset') {
-        this.onLossValueLabel.set('disable', true)
-        //}
-
-        this.stopOnWinValueLabel.set('disable', true)
-        this.stopOnLossValueLabel.set('disable', true)
+        this.onWinValueMinusButton.set('disable', true)
+        this.onWinValuePlusButton.set('disable', true)
+        this.onLossValueMinusButton.set('disable', true)
+        this.onLossValuePlusButton.set('disable', true)
+        this.onStopOnWinValueMinusButton.set('disable', true)
+        this.onStopOnWinValuePlusButton.set('disable', true)
+        this.onStopOnLossValueMinusButton.set('disable', true)
+        this.onStopOnLossValuePlusButton.set('disable', true)
       }
     })
 
@@ -896,22 +981,21 @@ export default class AutoBetting extends Widget {
         }
 
         this.autospinButtons.forEach(button => button.set('disable', true))
-        this.betValueLabel.set('disable', true)
         this.onLossPanel.set('disable', true)
         this.onWinPanel.set('disable', true)
+        this.betMinusButton.set('disable', true)
+        this.betPlusButton.set('disable', true)
         this.betHalfButton.set('disable', true)
         this.betDoubleButton.set('disable', true)
 
-        //if (this.gameModel.get('betOnWinAction') !== 'reset') {
-        this.onWinValueLabel.set('disable', true)
-        //}
-
-        //if (this.gameModel.get('betOnLossAction') !== 'reset') {
-        this.onLossValueLabel.set('disable', true)
-        //}
-
-        this.stopOnWinValueLabel.set('disable', true)
-        this.stopOnLossValueLabel.set('disable', true)
+        this.onWinValueMinusButton.set('disable', true)
+        this.onWinValuePlusButton.set('disable', true)
+        this.onLossValueMinusButton.set('disable', true)
+        this.onLossValuePlusButton.set('disable', true)
+        this.onStopOnWinValueMinusButton.set('disable', true)
+        this.onStopOnWinValuePlusButton.set('disable', true)
+        this.onStopOnLossValueMinusButton.set('disable', true)
+        this.onStopOnLossValuePlusButton.set('disable', true)
 
       } else {
         this.rollButton.set({
@@ -938,22 +1022,21 @@ export default class AutoBetting extends Widget {
         this.rollAutospinInfinity.visible = false
 
         this.autospinButtons.forEach(button => button.set('disable', false))
-        this.betValueLabel.set('disable', false)
         this.onLossPanel.set('disable', false)
         this.onWinPanel.set('disable', false)
+        this.betMinusButton.set('disable', false)
+        this.betPlusButton.set('disable', false)
         this.betHalfButton.set('disable', false)
         this.betDoubleButton.set('disable', false)
 
-        //if (this.gameModel.get('betOnWinAction') !== 'reset') {
-        this.onWinValueLabel.set('disable', false)
-        //}
-
-        //if (this.gameModel.get('betOnLossAction') !== 'reset') {
-        this.onLossValueLabel.set('disable', false)
-        //}
-
-        this.stopOnWinValueLabel.set('disable', false)
-        this.stopOnLossValueLabel.set('disable', false)
+        this.onWinValueMinusButton.set('disable', false)
+        this.onWinValuePlusButton.set('disable', false)
+        this.onLossValueMinusButton.set('disable', false)
+        this.onLossValuePlusButton.set('disable', false)
+        this.onStopOnWinValueMinusButton.set('disable', false)
+        this.onStopOnWinValuePlusButton.set('disable', false)
+        this.onStopOnLossValueMinusButton.set('disable', false)
+        this.onStopOnLossValuePlusButton.set('disable', false)
       }
     })
 
@@ -1048,7 +1131,11 @@ export default class AutoBetting extends Widget {
 
     this.betBackground.set({
       y: this.betLabel.get('y') + this.betLabel.get('height') / 2 + 8,
-      width: this.get('width') - this.betHalfButton.get('width') - this.betDoubleButton.get('width') - 20,
+      width: this.get('width') -
+        this.betMinusButton.get('width') -
+        this.betPlusButton.get('width') -
+        this.betHalfButton.get('width') -
+        this.betDoubleButton.get('width') - 5 * 4,
     })
 
     this.betValueLabel.set({
@@ -1062,9 +1149,19 @@ export default class AutoBetting extends Widget {
       this.betValueLabel.get('y'),
     )
 
-    this.betHalfButton.set({
-      x: this.betBackground.get('width') + 15,
+    this.betMinusButton.set({
+      x: this.betBackground.get('width') + 5,
       y: this.betLabel.get('y') + this.betLabel.get('height') / 2 + 8,
+    })
+
+    this.betPlusButton.set({
+      x: this.betMinusButton.get('x') + this.betMinusButton.get('width') + 5,
+      y: this.betMinusButton.get('y'),
+    })
+
+    this.betHalfButton.set({
+      x: this.betPlusButton.get('x') + this.betPlusButton.get('width') + 5,
+      y: this.betPlusButton.get('y'),
     })
 
     this.betDoubleButton.set({
@@ -1107,7 +1204,7 @@ export default class AutoBetting extends Widget {
 
     this.onWinValueBackground.set({
       y: this.onWinPanel.get('y') + this.onWinPanel.get('height') + 18,
-      width: this.get('width'),
+      width: this.get('width') - this.onWinValueMinusButton.get('width') - this.onWinValuePlusButton.get('width') - 10,
       visible: isMobile,
     })
 
@@ -1131,7 +1228,7 @@ export default class AutoBetting extends Widget {
 
     this.onLossValueBackground.set({
       y: this.onLossPanel.get('y') + this.onLossPanel.get('height') + 18,
-      width: this.get('width'),
+      width: this.get('width') - this.onWinValueMinusButton.get('width') - this.onWinValuePlusButton.get('width') - 10,
       visible: isMobile,
     })
 
@@ -1149,7 +1246,7 @@ export default class AutoBetting extends Widget {
 
     this.stopOnWinValueBackground.set({
       y: this.stopOnWinLabel.get('y') + this.stopOnWinLabel.get('height'),
-      width: this.get('width'),
+      width: this.get('width') - this.onWinValueMinusButton.get('width') - this.onWinValuePlusButton.get('width') - 10,
       visible: isMobile,
     })
 
@@ -1172,7 +1269,7 @@ export default class AutoBetting extends Widget {
 
     this.stopOnLossValueBackground.set({
       y: this.stopOnLossLabel.get('y') + this.stopOnLossLabel.get('height'),
-      width: this.get('width'),
+      width: this.get('width') - this.onWinValueMinusButton.get('width') - this.onWinValuePlusButton.get('width') - 10,
       visible: isMobile,
     })
 
@@ -1187,6 +1284,42 @@ export default class AutoBetting extends Widget {
       this.stopOnLossValueLabel.get('x') - 20,
       this.stopOnLossValueLabel.get('y'),
     )
+
+    this.onWinValueMinusButton.set({
+      x: this.onWinValueBackground.get('x') + this.onWinValueBackground.get('width') + 5,
+      y: this.onWinValueBackground.get('y'),
+    })
+    this.onWinValuePlusButton.set({
+      x: this.onWinValueMinusButton.get('x') + this.onWinValueMinusButton.get('width') + 5,
+      y: this.onWinValueMinusButton.get('y'),
+    })
+
+    this.onLossValueMinusButton.set({
+      x: this.onLossValueBackground.get('x') + this.onLossValueBackground.get('width') + 5,
+      y: this.onLossValueBackground.get('y'),
+    })
+    this.onLossValuePlusButton.set({
+      x: this.onLossValueMinusButton.get('x') + this.onLossValueMinusButton.get('width') + 5,
+      y: this.onLossValueMinusButton.get('y'),
+    })
+
+    this.onStopOnWinValueMinusButton.set({
+      x: this.stopOnWinValueBackground.get('x') + this.stopOnWinValueBackground.get('width') + 5,
+      y: this.stopOnWinValueBackground.get('y'),
+    })
+    this.onStopOnWinValuePlusButton.set({
+      x: this.onStopOnWinValueMinusButton.get('x') + this.onStopOnWinValueMinusButton.get('width') + 5,
+      y: this.onStopOnWinValueMinusButton.get('y'),
+    })
+
+    this.onStopOnLossValueMinusButton.set({
+      x: this.stopOnLossValueBackground.get('x') + this.stopOnLossValueBackground.get('width') + 5,
+      y: this.stopOnLossValueBackground.get('y'),
+    })
+    this.onStopOnLossValuePlusButton.set({
+      x: this.onStopOnLossValueMinusButton.get('x') + this.onStopOnLossValueMinusButton.get('width') + 5,
+      y: this.onStopOnLossValueMinusButton.get('y'),
+    })
 
     super.redraw(changed)
   }
